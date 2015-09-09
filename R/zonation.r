@@ -53,29 +53,27 @@ zonation                                                                      <-
   )                                                                          %>%
   base::system(ignore.stdout = TRUE)                                           ;
 
-  features_info                                                               <-
-    base::paste0(resstem, '.features_info.txt')                              %>%
-    readr::read_tsv(
-      file      = .,
-      col_names = base::c(
-                    'weight',
-                    'dist_sum',
-                    'ig_retain',
-                    't_viol_fract_rem',
-                    'dist_mean_x',
-                    'dist_mean_y',
-                    'map_file_name'
-                  ),
-      col_types = 'cdddddc',
-      skip      = 2
-    )                                                                        %>%
-    dplyr::mutate(
-      weight = base::as.numeric(x = weight)
-    )                                                                          ;
-
   nfeatures                                                                   <-
     features                                                                 %>%
     base::length(x = .)                                                        ;
+
+  features_info                                                               <-
+    base::paste0(resstem, '.features_info.txt')                              %>%
+    base::scan(skip = 2, what = 'char')                                      %>%
+    base::matrix(nrow=nfeatures, byrow = TRUE)                               %>%
+    base::as.data.frame(stringsAsFactors = FALSE)                            %>%
+    readr::type_convert(.)                                                   %>%
+    magrittr::set_colnames(
+      base::c(
+        'weight',
+        'dist_sum',
+        'ig_retain',
+        't_viol_fract_rem',
+        'dist_mean_x',
+        'dist_mean_y',
+        'map_file_name'
+      )
+    )                                                                          ;
 
   curves                                                                      <-
     readr::read_table(
