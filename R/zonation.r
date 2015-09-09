@@ -94,14 +94,12 @@ zonation                                                                      <-
                       '_rem'
                     )
                   ),
-      col_types = base::paste0(
-                               'didddddd',
-                               base::rep(
-                                 x     = 'd',
-                                 times = nfeatures
-                               ),
-                    collapse = ''
-                  ),
+      col_types =                                                              {
+                  'd'                                                        %>%
+                  base::rep(nfeatures)                                       %>%
+                  base::c('diddddd', .)                                     %>%
+                  base::paste0(collapse = '')                                 ;}
+                  ,
       skip      = 1
     )                                                                          ;
 
