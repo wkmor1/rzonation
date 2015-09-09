@@ -90,7 +90,7 @@ zonation                                                                      <-
                     'ext_2',
                     base::paste0(
                       'prop_',
-                      tools::file_path_sans_ext(x = x),
+                      tools::file_path_sans_ext(x = features),
                       '_rem'
                     )
                   ),
