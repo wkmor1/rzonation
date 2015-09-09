@@ -97,7 +97,7 @@ zonation                                                                      <-
       col_types =                                                              {
                   'd'                                                        %>%
                   base::rep(nfeatures)                                       %>%
-                  base::c('diddddd', .)                                     %>%
+                  base::c('diddddd', .)                                      %>%
                   base::paste0(collapse = '')                                 ;}
                   ,
       skip      = 1
