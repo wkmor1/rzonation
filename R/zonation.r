@@ -3,8 +3,7 @@
 #'Runs the zonation software for conservation planning on a set of GeoTiff files
 #'and returns the output as a list.
 #'
-#'@param x the path of a folder container the GeoTiff files of the features in
-#'   conservation plan.
+#'@param x full paths of the GeoTiff files for features in the conservation plan.
 #'
 #'@export
 
@@ -31,11 +30,7 @@ zonation                                                         <-
   spfile                                                         <-
     base::tempfile(tmpdir = dir)                                 ;
 
-  feature_files                                                  <-
-    x                                                            %>%
-    base::list.files(full.names = TRUE)                          ;
-
-  feature_files                                                  %>%
+  x                                                              %>%
   base::paste0('1 1 1 1 1 ', ., '\n', collapse = '')             %>%
   base::cat(file = spfile)                                       ;
 
@@ -58,7 +53,7 @@ zonation                                                         <-
       col_names = base::c(
                     'weight',
                     'dist_sum',
-                    'ig_retain', 
+                    'ig_retain',
                     't_viol_fract_rem',
                     'dist_mean_x',
                     'dist_mean_y',
@@ -72,7 +67,7 @@ zonation                                                         <-
     )                                                            ;
 
   nfeatures                                                      <-
-    feature_files                                                %>%
+    x                                                           %>%
     base::length(x = .)                                          ;
 
   curves                                                         <-

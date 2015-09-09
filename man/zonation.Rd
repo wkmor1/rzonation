@@ -7,8 +7,7 @@
 zonation(x)
 }
 \arguments{
-\item{x}{the path of a folder container the GeoTiff files of the features in
-  conservation plan.}
+\item{x}{full paths of the GeoTiff files for features in the conservation plan.}
 }
 \description{
 Runs the zonation software for conservation planning on a set of GeoTiff files
