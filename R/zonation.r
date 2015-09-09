@@ -59,7 +59,7 @@ zonation                                                                      <-
 
   features_info                                                               <-
     base::paste0(resstem, '.features_info.txt')                              %>%
-    base::scan(skip = 2, what = 'char')                                      %>%
+    base::scan(skip = 2, what = 'char', quiet = TRUE)                        %>%
     base::matrix(nrow=nfeatures, byrow = TRUE)                               %>%
     base::as.data.frame(stringsAsFactors = FALSE)                            %>%
     readr::type_convert(.)                                                   %>%
