@@ -1,4 +1,5 @@
 #' @importFrom magrittr %>%
 
 # to use magrittr shortcut
-utils::globalVariables('.')
+utils::globalVariables('.')                                                    ;
+

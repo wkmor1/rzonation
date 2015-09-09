@@ -4,10 +4,10 @@
 \alias{zonation}
 \title{Run the program zonation from R}
 \usage{
-zonation(x)
+zonation(features)
 }
 \arguments{
-\item{x}{full paths of the GeoTiff files for features in the conservation plan.}
+\item{features}{file paths of the GeoTiff files for features in the conservation plan.}
 }
 \description{
 Runs the zonation software for conservation planning on a set of GeoTiff files
