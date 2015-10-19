@@ -19,15 +19,18 @@ setMethod(
    c(features = "RasterStack"),
    function(features) {
      raster::writeRaster(
-       x       = features,
-       file    =
-         base::paste0(
-           base::tempdir(),
-           "/", "feature.tif"
-         ),
-       bylayer = TRUE,
-       suffix  = "names"
+       x         = features,
+       file      =
+                   base::paste0(
+                     base::tempdir(),
+                     "/",
+                     "feature.tif"
+                   ),
+       overwrite = TRUE,
+       bylayer   = TRUE,
+       suffix    = "names"
      );
+
      rzonation::zonation(
        features = base::paste0(
          base::tempdir(),
