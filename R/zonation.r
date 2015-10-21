@@ -18,13 +18,14 @@ setMethod(
    "zonation",
    c(features = "RasterStack"),
    function(features) {
+     rand_fname <-
+       base::tempfile("feature")
      raster::writeRaster(
        x         = features,
        file      =
                    base::paste0(
-                     base::tempdir(),
-                     "/",
-                     "feature.tif"
+                     rand_fname,
+                     ".tif"
                    ),
        overwrite = TRUE,
        bylayer   = TRUE,
@@ -34,7 +35,9 @@ setMethod(
      rzonation::zonation(
        features = base::paste0(
          base::tempdir(),
-         "/", "feature_",
+         "/",
+         base::basename(rand_fname),
+         "_",
          base::names(features),
          ".tif"
        )
