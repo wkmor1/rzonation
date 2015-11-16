@@ -47,7 +47,7 @@ setMethod(
 
 setMethod(
   "zonation",
-  c(features = "character"),
+  base::c(features = "character"),
   function(features) {
     zp <- base::getOption("rzonation.path");
     if (!base::nzchar(zp)) base::stop("zonation binary not found");
@@ -71,7 +71,7 @@ setMethod(
     base::paste0("1 1 1 1 1 ", ., "\n", collapse = "") %>%
     base::cat(file = spfile);
 
-    resstem  <- base::tempfile(tmpdir = dir);
+    resstem <- base::tempfile(tmpdir = dir);
 
     base::paste(
       base::getOption("rzonation.path"),
