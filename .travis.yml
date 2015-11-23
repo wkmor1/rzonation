@@ -44,13 +44,13 @@ install:
   - Rscript -e 'if(!"devtools" %in% rownames(installed.packages())) { install.packages("devtools", dependencies = TRUE) }'
   - Rscript -e 'update.packages(ask = FALSE, instlib = "~/Rlib")'
   - Rscript -e 'devtools::install_deps(pkg = ".", dependencies = TRUE)'
-  - echo 'PATH=$PATH:$HOME/zonation4/bin/zig4' >> .Renviron
   - WORKDIR=`pwd`
   - cd $HOME
   - mkdir -p zonation4
   - cd zonation4
   - wget http://cbig.it.helsinki.fi/files/zonation/zig4/zonation-4.0.0rc1_compact-GNU-Linux.tar.bz2
   - tar jxf zonation-4.0.0rc1_compact-GNU-Linux.tar.bz2 -C . --strip-components 1
+  - ln -sf ~/zonation4/bin/zig4 /usr/local/bin/zig4
   - cd $WORKDIR
 
 # Build and check package
