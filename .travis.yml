@@ -21,11 +21,8 @@ addons:
     - r-base-dev
     - r-recommended
     - pandoc
-    - cmake
-    - build-essential
     - libqt4-dev
     - libfftw3-dev
-    - libqwt-dev
     - libboost-all-dev
     - libgdal-dev
 
@@ -50,12 +47,14 @@ install:
   - Rscript -e 'if(!"devtools" %in% rownames(installed.packages())) { install.packages("devtools", dependencies = TRUE) }'
   - Rscript -e 'update.packages(ask = FALSE, instlib = "~/Rlib")'
   - Rscript -e 'devtools::install_deps(pkg = ".", dependencies = TRUE)'
-  - git clone https://github.com/cbig/zonation-core.git
-  - mkdir -p build \
-  - cd build \
-  - cmake ../zonation-core \
-  - make \
-  - export PATH=$PATH:/build/zig4
+  - WORKDIR=`pwd`
+  - cd $HOME
+  - mkdir -p zonation4
+  - cd zonation4
+  - wget zonation4.tar.bz2 http://cbig.it.helsinki.fi/files/zonation/zig4/zonation-4.0.0rc1_compact-GNU-Linux.tar.bz2
+  - tar jxf zonation4.tar.bz2 -C . --strip-components 1
+  - export PATH=$PATH:$HOME/zonation4/bin/zig4
+  - cd $WORKDIR
 
 # Build and check package
 script:
