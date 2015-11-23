@@ -8,11 +8,12 @@
 #' @importFrom raster readAll stack writeRaster
 #' @importFrom readr read_file read_table type_convert
 #' @importFrom methods setGeneric setMethod
+#' @importFrom rgdal gdalDrivers
 #'
 #' @examples
 #' library(raster)
-#' r1 <- raster(matrix(rnorm(100, 10)))
-#' r2 <- raster(matrix(rnorm(100, 10)))
+#' r1 <- raster(matrix(runif(200^2, 0, 1), 200))
+#' r2 <- raster(matrix(runif(200^2, 0, 1), 200))
 #' plan <- zonation(stack(r1, r2))
 #'
 #' @export

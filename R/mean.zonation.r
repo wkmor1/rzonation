@@ -9,8 +9,8 @@
 #'
 #' @examples
 #' library(raster)
-#' r1 <- raster(matrix(rnorm(100, 10)))
-#' r2 <- raster(matrix(rnorm(100, 10)))
+#' r1 <- raster(matrix(runif(200^2, 0, 1), 200))
+#' r2 <- raster(matrix(runif(200^2, 0, 1), 200))
 #' plan <- zonation(stack(r1, r2))
 #' mean(plan)
 #'
@@ -35,12 +35,13 @@ mean.zonation <-
   base::match.arg(method) %>%
   base::switch(
     arithmetic =
-      row["ave_prop_remain"],
+      row["ave_prop_rem"] %>%
+      base::as.numeric(),
     geometric =
       row[-1:-7] %>%
       base::log() %>%
       base::as.numeric() %>%
-      base::mean(...) %>%
+      base::mean(..., na.rm = TRUE) %>%
       base::exp()
   );
 }
