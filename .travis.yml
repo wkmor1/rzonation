@@ -21,6 +21,7 @@ addons:
     - r-base-dev
     - r-recommended
     - pandoc
+    - libgdal-dev
 
 # cache local R libraries directory:
 cache:
@@ -40,6 +41,7 @@ install:
   - echo 'R_LIBS=~/Rlib' > .Renviron
   - echo 'options(repos = "http://cran.rstudio.com")' > .Rprofile
   - echo '.travis.yml' > .Rbuildignore
+  - echo 'rzonation.rproj' > .Rbuildignore
   - Rscript -e 'if(!"devtools" %in% rownames(installed.packages())) { install.packages("devtools", dependencies = TRUE) }'
   - Rscript -e 'update.packages(ask = FALSE, instlib = "~/Rlib")'
   - Rscript -e 'devtools::install_deps(pkg = ".", dependencies = TRUE)'
