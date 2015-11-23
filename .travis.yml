@@ -21,10 +21,6 @@ addons:
     - r-base-dev
     - r-recommended
     - pandoc
-    - libqt4-dev
-    - libfftw3-dev
-    - libboost-all-dev
-    - libgdal-dev
 
 # cache local R libraries directory:
 cache:
