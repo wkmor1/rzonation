@@ -1,11 +1,11 @@
-#"Run the program zonation from R
-#"
-#"Runs the zonation software for conservation planning on a set of GeoTiff files
-#"and returns the output as a list.
-#"
-#"@param features file paths of the GeoTiff files for features in the conservation plan.
-#"
-#"@export
+#'Run the program zonation from R
+#'
+#'Runs the zonation software for conservation planning on a set of GeoTiff files
+#'and returns the output as a list.
+#'
+#'@param features RasterStack or file paths of the raster files for features in the conservation plan.
+#'
+#'@export
 
 setGeneric(
   "zonation",
