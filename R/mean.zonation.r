@@ -25,8 +25,7 @@ mean.zonation <-
     base::which.min() %>%
     magrittr::extract(x$curves, ., );
 
-  method %<>% base::match.arg();
-
+  base::match.arg(method) %>%
   base::switch(
     arithmetic =
       row["ave_prop_remain"],
