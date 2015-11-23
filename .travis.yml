@@ -50,6 +50,7 @@ install:
   - cd zonation4
   - wget http://cbig.it.helsinki.fi/files/zonation/zig4/zonation-4.0.0rc1_compact-GNU-Linux.tar.bz2
   - tar jxf zonation-4.0.0rc1_compact-GNU-Linux.tar.bz2 -C . --strip-components 1
+  - mkdir -p $HOME/bin
   - ln -sf ~/zonation4/bin/zig4 /home/travis/bin/zig4
   - cd $WORKDIR
 
