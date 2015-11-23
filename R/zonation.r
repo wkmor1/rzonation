@@ -1,15 +1,21 @@
-#'Run the program zonation from R
+#' Run the program zonation from R
 #'
-#'Runs the zonation software for conservation planning on a set of GeoTiff files
-#'and returns the output as a list.
+#' Runs the zonation software for conservation planning on a set of GeoTiff files
+#' and returns the output as a list.
 #'
-#'@param features RasterStack or file paths of the raster files for features in the conservation plan.
+#' @param features RasterStack or file paths of the raster files for features in the conservation plan.
 #'
-#'@importFrom raster readAll stack writeRaster
-#'@importFrom readr read_file read_table type_convert
-#'@importFrom methods setGeneric setMethod
+#' @importFrom raster readAll stack writeRaster
+#' @importFrom readr read_file read_table type_convert
+#' @importFrom methods setGeneric setMethod
 #'
-#'@export
+#' @examples
+#' library(raster)
+#' r1 <- raster(matrix(rnorm(100, 10)))
+#' r2 <- raster(matrix(rnorm(100, 10)))
+#' plan <- zonation(stack(r1, r2))
+#'
+#' @export
 
 setGeneric(
   "zonation",

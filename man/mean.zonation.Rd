@@ -19,4 +19,12 @@
 \description{
 Calculate the mean proportion of features remaining when a given proportion of landscape is protected.
 }
+\examples{
+library(raster)
+r1 <- raster(matrix(rnorm(100, 10)))
+r2 <- raster(matrix(rnorm(100, 10)))
+plan <- zonation(stack(r1, r2))
+mean(plan)
+
+}
 

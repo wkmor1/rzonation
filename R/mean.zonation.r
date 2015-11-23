@@ -1,13 +1,20 @@
-#'Calculate mean proportion remaining
+#' Calculate mean proportion remaining
 #'
-#'Calculate the mean proportion of features remaining when a given proportion of landscape is protected.
+#' Calculate the mean proportion of features remaining when a given proportion of landscape is protected.
 #'
-#'@param x a zonation object.
-#'@param p numeric proportion of landscape protected.
-#'@param method the method of calculating the mean arithmetic or geometric.
-#'@param ... further arguments passed to or from other methods.
+#' @param x a zonation object.
+#' @param p numeric proportion of landscape protected.
+#' @param method the method of calculating the mean arithmetic or geometric.
+#' @param ... further arguments passed to or from other methods.
 #'
-#'@export
+#' @examples
+#' library(raster)
+#' r1 <- raster(matrix(rnorm(100, 10)))
+#' r2 <- raster(matrix(rnorm(100, 10)))
+#' plan <- zonation(stack(r1, r2))
+#' mean(plan)
+#'
+#' @export
 
 mean.zonation <-
   function(x, p = .1, method = c("arithmetic", "geometric"), ...) {

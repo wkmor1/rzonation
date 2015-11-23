@@ -26,4 +26,11 @@ and returns the output as a list.
 
 \item \code{character}: run the program zonation for raster files
 }}
+\examples{
+library(raster)
+r1 <- raster(matrix(rnorm(100, 10)))
+r2 <- raster(matrix(rnorm(100, 10)))
+plan <- zonation(stack(r1, r2))
+
+}
 
