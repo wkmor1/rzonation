@@ -5,6 +5,10 @@
 #'
 #'@param features RasterStack or file paths of the raster files for features in the conservation plan.
 #'
+#'@importFrom raster readAll stack writeRaster
+#'@importFrom readr read_file read_table type_convert
+#'@importFrom methods setGeneric setMethod
+#'
 #'@export
 
 setGeneric(
@@ -14,13 +18,14 @@ setGeneric(
   }
 );
 
+#' @describeIn zonation run the program zonation for a RasterStack
 setMethod(
    "zonation",
-   c(features = "RasterStack"),
+   base::c(features = "RasterStack"),
    function(features) {
      rand_fname <-
        base::tempfile("feature")
-     raster::writeRaster(
+       raster::writeRaster(
        x         = features,
        file      =
                    base::paste0(
@@ -45,6 +50,7 @@ setMethod(
    }
 );
 
+#' @describeIn zonation run the program zonation for raster files
 setMethod(
   "zonation",
   base::c(features = "character"),
@@ -67,8 +73,7 @@ setMethod(
 
     spfile <- base::tempfile(tmpdir = dir);
 
-    features %>%
-    base::paste0("1 1 1 1 1 ", ., "\n", collapse = "") %>%
+    base::paste0("1 1 1 1 1 ", features, "\n", collapse = "") %>%
     base::cat(file = spfile);
 
     resstem <- base::tempfile(tmpdir = dir);
@@ -157,7 +162,8 @@ setMethod(
       curves        = curves,
       rasters       = rasters,
       run_info      = run_info
-    );
+    ) %>%
+    base::structure(class = "zonation")
   }
 );
 
