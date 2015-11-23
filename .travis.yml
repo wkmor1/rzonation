@@ -41,7 +41,6 @@ install:
   - mkdir -p ~/Rlib
   - echo 'R_LIBS=~/Rlib' > .Renviron
   - echo 'options(repos = "http://cran.rstudio.com")' > .Rprofile
-  - echo 'system("export PATH=$PATH:$HOME/zonation4/bin")' >> .Rprofile
   - Rscript -e 'if(!"devtools" %in% rownames(installed.packages())) { install.packages("devtools", dependencies = TRUE) }'
   - Rscript -e 'update.packages(ask = FALSE, instlib = "~/Rlib")'
   - Rscript -e 'devtools::install_deps(pkg = ".", dependencies = TRUE)'
@@ -51,8 +50,8 @@ install:
   - cd zonation4
   - wget http://cbig.it.helsinki.fi/files/zonation/zig4/zonation-4.0.0rc1_compact-GNU-Linux.tar.bz2
   - tar jxf zonation-4.0.0rc1_compact-GNU-Linux.tar.bz2 -C . --strip-components 1
+  - ln -sf ~/zonation4/bin/zig4 /home/travis/bin/zig4
   - cd $WORKDIR
-  - echo $PATH
 
 # Build and check package
 script:
