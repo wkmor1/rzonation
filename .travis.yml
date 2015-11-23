@@ -22,6 +22,7 @@ addons:
     - r-recommended
     - pandoc
     - libgdal-dev
+    - libproj-dev
 
 # cache local R libraries directory:
 cache:
