@@ -4,7 +4,7 @@
 \alias{ggplot.zonation}
 \title{Plot a zonation object}
 \usage{
-ggplot.zonation(data, ...)
+\method{ggplot}{zonation}(data, ...)
 }
 \arguments{
 \item{data}{a zonation object.}
