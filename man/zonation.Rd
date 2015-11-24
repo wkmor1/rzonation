@@ -7,14 +7,20 @@
 \alias{zonation,character-method}
 \title{Run the program zonation from R}
 \usage{
-zonation(features)
+zonation(features, settings = NULL, command_args = NULL)
 
-\S4method{zonation}{RasterStack}(features)
+\S4method{zonation}{RasterStack}(features, settings = NULL,
+  command_args = NULL)
 
-\S4method{zonation}{character}(features)
+\S4method{zonation}{character}(features, settings = NULL,
+  command_args = NULL)
 }
 \arguments{
 \item{features}{RasterStack or file paths of the raster files for features in the conservation plan.}
+
+\item{settings}{a named list of settings equivalent to the zonation settings file (see zonation manual for details and list of settings)}
+
+\item{command_args}{character string of command line arguments.}
 }
 \description{
 Runs the zonation software for conservation planning on a set of GeoTiff files

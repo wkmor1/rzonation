@@ -4,6 +4,8 @@
 #' and returns the output as a list.
 #'
 #' @param features RasterStack or file paths of the raster files for features in the conservation plan.
+#' @param settings a named list of settings equivalent to the zonation settings file (see zonation manual for details and list of settings)
+#' @param command_args character string of command line arguments.
 #'
 #' @importFrom raster readAll stack writeRaster
 #' @importFrom readr read_file read_table type_convert
@@ -20,7 +22,7 @@
 
 setGeneric(
   "zonation",
-  function(features) {
+  function(features, settings = NULL, command_args = NULL) {
     standardGeneric("zonation")
   }
 );
@@ -29,7 +31,7 @@ setGeneric(
 setMethod(
    "zonation",
    base::c(features = "RasterStack"),
-   function(features) {
+   function(features, settings, command_args) {
      rand_fname <-
        base::tempfile("feature")
        raster::writeRaster(
@@ -61,20 +63,31 @@ setMethod(
 setMethod(
   "zonation",
   base::c(features = "character"),
-  function(features) {
+  function(features, settings, command_args) {
     zp <- base::getOption("rzonation.path");
     if (!base::nzchar(zp)) base::stop("zonation binary not found");
     dir <- base::tempdir();
     datfile <- base::tempfile(tmpdir = dir);
 
-    base::paste(
-      "[Settings]",
-      "removal rule = 1",
-      "warp factor = 1000",
-      "edge removal = 1",
-      "add edge points = 0",
-      "annotate name = 0",
-      sep = "\n"
+    if (base::is.null(settings)) {
+      settings <- base::list()
+    }
+
+    settings %<>%
+      bind_if_not_in("removal rule", 1) %>%
+      bind_if_not_in("warp factor", 1000) %>%
+      bind_if_not_in("edge removal", 1) %>%
+      bind_if_not_in("add edge points", 0) %>%
+      bind_if_not_in("annotate name", 0)
+
+    base::paste0(
+      "[Settings]\n",
+      base::paste(
+        base::names(settings),
+        settings,
+        sep = " = ",
+        collapse = '\n'
+      )
     ) %>%
     base::cat(file = datfile);
 
@@ -85,13 +98,16 @@ setMethod(
 
     resstem <- base::tempfile(tmpdir = dir);
 
+    if (is.null(command_args)) command_args <- "--use-threads=1"
+
     base::paste(
       base::getOption("rzonation.path"),
       "-r",
       datfile,
       spfile,
       resstem,
-      "0.0 0 1.0 1"
+      "0.0 0 1.0 1 ",
+      command_args
     ) %>%
     base::system(ignore.stdout = TRUE);
 
