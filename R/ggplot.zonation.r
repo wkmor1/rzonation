@@ -46,3 +46,5 @@ ggplot.zonation <-
       axis.title = ggplot2::element_blank()
     )
   }
+
+utils::globalVariables(base::c("x", "y", "value"))
