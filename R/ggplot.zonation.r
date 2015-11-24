@@ -3,7 +3,7 @@
 #' Plot a zonation object using ggplot
 #'
 #' @param data a zonation object.
-#' @param ...other arguments.
+#' @param ... other arguments.
 #'
 #'@importFrom ggplot2 ggplot
 #'
