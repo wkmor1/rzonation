@@ -9,7 +9,7 @@
 \arguments{
 \item{data}{a zonation object.}
 
-\item{...other}{arguments.}
+\item{...}{other arguments.}
 }
 \description{
 Plot a zonation object using ggplot
