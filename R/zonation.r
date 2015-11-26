@@ -6,7 +6,10 @@
 #' @param features RasterStack or file paths of the raster files for features in the conservation plan.
 #' @param params a matrix of feature parameter values. Matrix must have 5 columns and one row for each feature. If unset all values default to 1.See Zonation manual for details.
 #' @param settings a named list of settings equivalent to the zonation settings file (see zonation manual for details and list of settings)
-#' @param command_args character string of command line arguments.
+#' @param alpha numeric uncertainty parameter.
+#' @param dist_smooth logical. should distribution smoothing be used.
+#' @param kernel_width_mult numeric. factor to multiply feature dispersal kernel widths by.
+#' @param command_args character string of command line arguments. See zonation manual for details.
 #'
 #' @importFrom raster readAll stack writeRaster
 #' @importFrom readr read_file read_table type_convert
@@ -23,7 +26,10 @@
 
 setGeneric(
   "zonation",
-  function(features, params = NULL, settings = NULL, command_args = NULL) {
+  function(
+    features, params = NULL, settings = NULL, alpha = 0, dist_smooth = FALSE,
+    kernel_width_mult = 1, command_args = NULL
+  ) {
     standardGeneric("zonation")
   }
 );
@@ -71,7 +77,7 @@ setMethod(
     datfile <- base::tempfile(tmpdir = dir);
 
     if (base::is.null(settings)) {
-      settings <- base::list()
+      settings <- base::list;
     }
 
     settings %<>%
@@ -79,7 +85,7 @@ setMethod(
       bind_if_not_in("warp factor", 1000) %>%
       bind_if_not_in("edge removal", 1) %>%
       bind_if_not_in("add edge points", 0) %>%
-      bind_if_not_in("annotate name", 0)
+      bind_if_not_in("annotate name", 0);
 
     base::paste0(
       "[Settings]\n",
@@ -105,19 +111,19 @@ setMethod(
           is.numeric(params)
         )
       ) {
-        stop("params must be a 5 * nfeatures matrix")
+        stop("params must be a 5 * nfeatures matrix");
       }
       base::data.frame(params) %>%
       do.call(paste, .) %>%
-      paste(features, collapse = '\n')
+      paste(features, collapse = '\n');
     } else {
-      base::paste0("1 1 1 1 1 ", features, "\n", collapse = "")
+      base::paste0("1 1 1 1 1 ", features, "\n", collapse = "");
     } %>%
     base::cat(file = spfile);
 
     resstem <- base::tempfile(tmpdir = dir);
 
-    if (is.null(command_args)) command_args <- "--use-threads=1"
+    if (is.null(command_args)) command_args <- "--use-threads=1";
 
     base::paste(
       base::getOption("rzonation.path"),
@@ -125,7 +131,10 @@ setMethod(
       datfile,
       spfile,
       resstem,
-      "0.0 0 1.0 1 ",
+      alpha,
+      as.numeric(dist_smooth),
+      kernel_width_mult,
+      1,
       command_args
     ) %>%
     base::system(ignore.stdout = TRUE);
@@ -203,7 +212,7 @@ setMethod(
       rasters       = rasters,
       run_info      = run_info
     ) %>%
-    base::structure(class = "zonation")
+    base::structure(class = "zonation");
   }
 );
 
