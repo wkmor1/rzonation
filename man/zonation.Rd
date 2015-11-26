@@ -7,12 +7,15 @@
 \alias{zonation,character-method}
 \title{Run the program zonation from R}
 \usage{
-zonation(features, params = NULL, settings = NULL, command_args = NULL)
+zonation(features, params = NULL, settings = NULL, alpha = 0,
+  dist_smooth = FALSE, kernel_width_mult = 1, command_args = NULL)
 
 \S4method{zonation}{RasterStack}(features, params = NULL, settings = NULL,
+  alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
   command_args = NULL)
 
 \S4method{zonation}{character}(features, params = NULL, settings = NULL,
+  alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
   command_args = NULL)
 }
 \arguments{
@@ -22,7 +25,13 @@ zonation(features, params = NULL, settings = NULL, command_args = NULL)
 
 \item{settings}{a named list of settings equivalent to the zonation settings file (see zonation manual for details and list of settings)}
 
-\item{command_args}{character string of command line arguments.}
+\item{alpha}{numeric uncertainty parameter.}
+
+\item{dist_smooth}{logical. should distribution smoothing be used.}
+
+\item{kernel_width_mult}{numeric. factor to multiply feature dispersal kernel widths by.}
+
+\item{command_args}{character string of command line arguments. See zonation manual for details.}
 }
 \description{
 Runs the zonation software for conservation planning on a set of GeoTiff files

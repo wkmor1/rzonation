@@ -38,7 +38,10 @@ setGeneric(
 setMethod(
    "zonation",
    base::c(features = "RasterStack"),
-   function(features, params, settings, command_args) {
+   function(
+     features, params, settings, alpha, dist_smooth, kernel_width_mult,
+     command_args
+   ) {
      rand_fname <-
        base::tempfile("feature")
        raster::writeRaster(
@@ -70,14 +73,17 @@ setMethod(
 setMethod(
   "zonation",
   base::c(features = "character"),
-  function(features, params, settings, command_args) {
+  function(
+    features, params, settings, alpha, dist_smooth, kernel_width_mult,
+    command_args
+  ) {
     zp <- base::getOption("rzonation.path");
     if (!base::nzchar(zp)) base::stop("zonation binary not found");
     dir <- base::tempdir();
     datfile <- base::tempfile(tmpdir = dir);
 
     if (base::is.null(settings)) {
-      settings <- base::list;
+      settings <- base::list();
     }
 
     settings %<>%
