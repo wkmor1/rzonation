@@ -7,16 +7,18 @@
 \alias{zonation,character-method}
 \title{Run the program zonation from R}
 \usage{
-zonation(features, settings = NULL, command_args = NULL)
+zonation(features, params = NULL, settings = NULL, command_args = NULL)
 
-\S4method{zonation}{RasterStack}(features, settings = NULL,
+\S4method{zonation}{RasterStack}(features, params = NULL, settings = NULL,
   command_args = NULL)
 
-\S4method{zonation}{character}(features, settings = NULL,
+\S4method{zonation}{character}(features, params = NULL, settings = NULL,
   command_args = NULL)
 }
 \arguments{
 \item{features}{RasterStack or file paths of the raster files for features in the conservation plan.}
+
+\item{params}{a matrix of feature parameter values. Matrix must have 5 columns and one row for each feature. If unset all values default to 1.See Zonation manual for details.}
 
 \item{settings}{a named list of settings equivalent to the zonation settings file (see zonation manual for details and list of settings)}
 

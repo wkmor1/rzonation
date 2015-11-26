@@ -4,6 +4,7 @@
 #' and returns the output as a list.
 #'
 #' @param features RasterStack or file paths of the raster files for features in the conservation plan.
+#' @param params a matrix of feature parameter values. Matrix must have 5 columns and one row for each feature. If unset all values default to 1.See Zonation manual for details.
 #' @param settings a named list of settings equivalent to the zonation settings file (see zonation manual for details and list of settings)
 #' @param command_args character string of command line arguments.
 #'
@@ -22,7 +23,7 @@
 
 setGeneric(
   "zonation",
-  function(features, settings = NULL, command_args = NULL) {
+  function(features, params = NULL, settings = NULL, command_args = NULL) {
     standardGeneric("zonation")
   }
 );
@@ -31,7 +32,7 @@ setGeneric(
 setMethod(
    "zonation",
    base::c(features = "RasterStack"),
-   function(features, settings, command_args) {
+   function(features, params, settings, command_args) {
      rand_fname <-
        base::tempfile("feature")
        raster::writeRaster(
@@ -63,7 +64,7 @@ setMethod(
 setMethod(
   "zonation",
   base::c(features = "character"),
-  function(features, settings, command_args) {
+  function(features, params, settings, command_args) {
     zp <- base::getOption("rzonation.path");
     if (!base::nzchar(zp)) base::stop("zonation binary not found");
     dir <- base::tempdir();
@@ -93,7 +94,25 @@ setMethod(
 
     spfile <- base::tempfile(tmpdir = dir);
 
-    base::paste0("1 1 1 1 1 ", features, "\n", collapse = "") %>%
+    nfeatures <- base::length(features);
+
+    if (!is.null(params)) {
+      if (
+        !all(
+          is.matrix(params),
+          ncol(params) == 5,
+          nrow(params) == nfeatures,
+          is.numeric(params)
+        )
+      ) {
+        stop("params must be a 5 * nfeatures matrix")
+      }
+      base::data.frame(params) %>%
+      do.call(paste, .) %>%
+      paste(features, collapse = '\n')
+    } else {
+      base::paste0("1 1 1 1 1 ", features, "\n", collapse = "")
+    } %>%
     base::cat(file = spfile);
 
     resstem <- base::tempfile(tmpdir = dir);
@@ -110,8 +129,6 @@ setMethod(
       command_args
     ) %>%
     base::system(ignore.stdout = TRUE);
-
-    nfeatures <- base::length(features);
 
     features_info <-
       base::paste0(resstem, ".features_info.txt")       %>%
