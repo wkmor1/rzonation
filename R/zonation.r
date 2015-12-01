@@ -56,8 +56,6 @@ setMethod(
          suffix    = "names"
        );
 
-     browser();
-
      rzonation::zonation(
        features = base::paste0(
          base::tempdir(),
