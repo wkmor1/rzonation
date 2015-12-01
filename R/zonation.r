@@ -10,6 +10,7 @@
 #' @param dist_smooth logical. should distribution smoothing be used.
 #' @param kernel_width_mult numeric. factor to multiply feature dispersal kernel widths by.
 #' @param command_args character string of command line arguments. See zonation manual for details.
+#' @param ... additional settings.
 #'
 #' @importFrom raster readAll stack writeRaster
 #' @importFrom readr read_file read_table type_convert
@@ -28,7 +29,7 @@ setGeneric(
   "zonation",
   function(
     features, params = NULL, settings = NULL, alpha = 0, dist_smooth = FALSE,
-    kernel_width_mult = 1, command_args = NULL
+    kernel_width_mult = 1, command_args = NULL, ...
   ) {
     standardGeneric("zonation")
   }
@@ -40,7 +41,7 @@ setMethod(
    base::c(features = "RasterStack"),
    function(
      features, params, settings, alpha, dist_smooth, kernel_width_mult,
-     command_args
+     command_args, ...
    ) {
      rand_fname <-
        base::tempfile("feature")
@@ -70,7 +71,8 @@ setMethod(
        alpha,
        dist_smooth,
        kernel_width_mult,
-       command_args
+       command_args,
+       ...
      );
    }
 );
@@ -81,7 +83,7 @@ setMethod(
   base::c(features = "character"),
   function(
     features, params, settings, alpha, dist_smooth, kernel_width_mult,
-    command_args
+    command_args, ...
   ) {
     zp <- base::getOption("rzonation.path");
     if (!base::nzchar(zp)) base::stop("zonation binary not found");
@@ -97,18 +99,32 @@ setMethod(
       bind_if_not_in("warp factor", 1000) %>%
       bind_if_not_in("edge removal", 1) %>%
       bind_if_not_in("add edge points", 0) %>%
-      bind_if_not_in("annotate name", 0);
+      bind_if_not_in("annotate name", 0) %>%
+      bind_if_not_in("output weighted range size corrected richness", 0);
 
     base::paste0(
       "[Settings]\n",
       base::paste(
         base::names(settings),
-        settings,
+        base::format(settings, scientific = FALSE),
         sep = " = ",
         collapse = '\n'
       )
     ) %>%
     base::cat(file = datfile);
+
+    additional_settings <- base::list(...);
+
+    for (i in seq_along(additional_settings)) {
+      base::paste(
+        base::names(additional_settings[[i]]),
+        base::format(additional_settings[[i]], scientific = FALSE),
+        sep = " = ",
+        collapse = "\n"
+      ) %>%
+      base::paste0("[", base::names(additional_settings[i]), "]\n", ., "\n\n") %>%
+      base::cat(file = datfile, append = TRUE);
+    };
 
     spfile <- base::tempfile(tmpdir = dir);
 
@@ -157,7 +173,7 @@ setMethod(
       base::matrix(nrow = nfeatures, byrow = TRUE)      %>%
       base::as.data.frame(stringsAsFactors = FALSE)     %>%
       readr::type_convert(.) %>%
-      magrittr::set_colnames(
+      magrittr::set_colnames(.,
         base::c(
           "weight",
           "dist_sum",
@@ -208,9 +224,6 @@ setMethod(
         value = TRUE
       ) %>%
       raster::stack(x = .) %>%
-      magrittr::set_names(
-        value = base::c("rank", "wrscr")
-      ) %>%
       raster::readAll(object = .);
 
     run_info <-
