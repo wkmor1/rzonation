@@ -99,8 +99,7 @@ setMethod(
       bind_if_not_in("warp factor", 1000) %>%
       bind_if_not_in("edge removal", 1) %>%
       bind_if_not_in("add edge points", 0) %>%
-      bind_if_not_in("annotate name", 0) %>%
-      bind_if_not_in("output weighted range size corrected richness", 0);
+      bind_if_not_in("annotate name", 0);
 
     base::paste0(
       "[Settings]\n",
@@ -225,6 +224,15 @@ setMethod(
       ) %>%
       raster::stack(x = .) %>%
       raster::readAll(object = .);
+
+    layer_names <-
+      plan[["rasters"]] %>%
+      base::names() %>%
+      base::strsplit("\\.") %>%
+      base::lapply(function(x) x[2]) %>%
+      base::unlist()
+
+    rasters %<>% magrittr::set_names(layer_names)
 
     run_info <-
       readr::read_file(
