@@ -226,8 +226,7 @@ setMethod(
       raster::readAll(object = .);
 
     layer_names <-
-      plan[["rasters"]] %>%
-      base::names() %>%
+      base::names(rasters) %>%
       base::strsplit("\\.") %>%
       base::lapply(function(x) x[2]) %>%
       base::unlist()
