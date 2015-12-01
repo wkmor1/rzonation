@@ -45,16 +45,18 @@ setMethod(
      rand_fname <-
        base::tempfile("feature")
        raster::writeRaster(
-       x         = features,
-       file      =
-                   base::paste0(
-                     rand_fname,
-                     ".tif"
-                   ),
-       overwrite = TRUE,
-       bylayer   = TRUE,
-       suffix    = "names"
-     );
+         x         = features,
+         file      =
+                     base::paste0(
+                       rand_fname,
+                       ".tif"
+                     ),
+         overwrite = TRUE,
+         bylayer   = TRUE,
+         suffix    = "names"
+       );
+
+     browser();
 
      rzonation::zonation(
        features = base::paste0(
@@ -64,7 +66,13 @@ setMethod(
          "_",
          base::names(features),
          ".tif"
-       )
+       ),
+       params,
+       settings,
+       alpha,
+       dist_smooth,
+       kernel_width_mult,
+       command_args
      );
    }
 );
