@@ -35,46 +35,56 @@ setGeneric(
   }
 );
 
+zonation_raster <-
+  function(
+    features, params, settings, alpha, dist_smooth, kernel_width_mult,
+    command_args, ...
+  ) {
+    rand_fname <-
+      base::tempfile("feature")
+    raster::writeRaster(
+      x         = features,
+      file      =
+        base::paste0(
+          rand_fname,
+          ".tif"
+        ),
+      overwrite = TRUE,
+      bylayer   = TRUE,
+      suffix    = "names"
+    );
+
+    rzonation::zonation(
+      features = base::paste0(
+        base::tempdir(),
+        "/",
+        base::basename(rand_fname),
+        "_",
+        base::names(features),
+        ".tif"
+      ),
+      params,
+      settings,
+      alpha,
+      dist_smooth,
+      kernel_width_mult,
+      command_args,
+      ...
+    );
+  }
+
 #' @describeIn zonation run the program zonation for a RasterStack
 setMethod(
    "zonation",
    base::c(features = "RasterStack"),
-   function(
-     features, params, settings, alpha, dist_smooth, kernel_width_mult,
-     command_args, ...
-   ) {
-     rand_fname <-
-       base::tempfile("feature")
-       raster::writeRaster(
-         x         = features,
-         file      =
-                     base::paste0(
-                       rand_fname,
-                       ".tif"
-                     ),
-         overwrite = TRUE,
-         bylayer   = TRUE,
-         suffix    = "names"
-       );
+   zonation_raster
+);
 
-     rzonation::zonation(
-       features = base::paste0(
-         base::tempdir(),
-         "/",
-         base::basename(rand_fname),
-         "_",
-         base::names(features),
-         ".tif"
-       ),
-       params,
-       settings,
-       alpha,
-       dist_smooth,
-       kernel_width_mult,
-       command_args,
-       ...
-     );
-   }
+#' @describeIn zonation run the program zonation for a RasterStack
+setMethod(
+  "zonation",
+  base::c(features = "RasterBrick"),
+  zonation_raster
 );
 
 #' @describeIn zonation run the program zonation for raster files

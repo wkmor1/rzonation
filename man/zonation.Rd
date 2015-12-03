@@ -3,6 +3,7 @@
 \docType{methods}
 \name{zonation}
 \alias{zonation}
+\alias{zonation,RasterBrick-method}
 \alias{zonation,RasterStack-method}
 \alias{zonation,character-method}
 \title{Run the program zonation from R}
@@ -11,6 +12,10 @@ zonation(features, params = NULL, settings = NULL, alpha = 0,
   dist_smooth = FALSE, kernel_width_mult = 1, command_args = NULL, ...)
 
 \S4method{zonation}{RasterStack}(features, params = NULL, settings = NULL,
+  alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
+  command_args = NULL, ...)
+
+\S4method{zonation}{RasterBrick}(features, params = NULL, settings = NULL,
   alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
   command_args = NULL, ...)
 
@@ -42,6 +47,8 @@ and returns the output as a list.
 \section{Methods (by class)}{
 \itemize{
 \item \code{RasterStack}: run the program zonation for a RasterStack
+
+\item \code{RasterBrick}: run the program zonation for a RasterStack
 
 \item \code{character}: run the program zonation for raster files
 }}
