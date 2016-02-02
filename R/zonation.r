@@ -10,6 +10,7 @@
 #' @param dist_smooth logical. should distribution smoothing be used.
 #' @param kernel_width_mult numeric. factor to multiply feature dispersal kernel widths by.
 #' @param command_args character string of command line arguments. See zonation manual for details.
+#' @param ... additional settings.
 #'
 #' @importFrom raster readAll stack writeRaster
 #' @importFrom readr read_file read_table type_convert
@@ -28,55 +29,65 @@ setGeneric(
   "zonation",
   function(
     features, params = NULL, settings = NULL, alpha = 0, dist_smooth = FALSE,
-    kernel_width_mult = 1, command_args = NULL
+    kernel_width_mult = 1, command_args = NULL, ...
   ) {
     standardGeneric("zonation")
   }
 );
 
+zonation_raster <-
+  function(
+    features, params, settings, alpha, dist_smooth, kernel_width_mult,
+    command_args, ...
+  ) {
+    rand_fname <- base::tempfile("feature");
+
+    feature_files <- base::paste0(rand_fname, ".tif");
+
+    raster::writeRaster(
+      x         = features,
+      file      = feature_files,
+      overwrite = TRUE,
+      bylayer   = TRUE,
+      suffix    = "names"
+    );
+
+  plan <-
+    zonation(
+      features = base::paste0(
+        base::tempdir(),
+        "/",
+        base::basename(rand_fname),
+        "_",
+        base::names(features),
+        ".tif"
+      ),
+      params,
+      settings,
+      alpha,
+      dist_smooth,
+      kernel_width_mult,
+      command_args,
+      ...
+    );
+
+  base::file.remove(feature_files);
+
+  plan;
+}
+
 #' @describeIn zonation run the program zonation for a RasterStack
 setMethod(
-   "zonation",
-   base::c(features = "RasterStack"),
-   function(
-     features, params, settings, alpha, dist_smooth, kernel_width_mult,
-     command_args
-   ) {
+  "zonation",
+  base::c(features = "RasterStack"),
+  zonation_raster
+);
 
-     rand_fname <-
-       base::tempfile("feature");
-
-     raster::writeRaster(
-       x         = features,
-       file      =
-                   base::paste0(
-                     rand_fname,
-                     ".tif"
-                   ),
-       overwrite = TRUE,
-       bylayer   = TRUE,
-       suffix    = "names"
-     );
-
-     features <-
-       base::paste0(
-         base::tempdir(),
-         "/",
-         base::basename(rand_fname),
-         "_",
-         base::names(features),
-         ".tif"
-       )
-
-     plan <-
-       rzonation::zonation(
-         features = features
-       );
-
-     base::file.remove(features)
-
-     plan
-   }
+#' @describeIn zonation run the program zonation for a RasterStack
+setMethod(
+  "zonation",
+  base::c(features = "RasterBrick"),
+  zonation_raster
 );
 
 #' @describeIn zonation run the program zonation for raster files
@@ -85,7 +96,7 @@ setMethod(
   base::c(features = "character"),
   function(
     features, params, settings, alpha, dist_smooth, kernel_width_mult,
-    command_args
+    command_args, ...
   ) {
     zp <- base::getOption("rzonation.path");
     if (!base::nzchar(zp)) base::stop("zonation binary not found");
@@ -107,12 +118,25 @@ setMethod(
       "[Settings]\n",
       base::paste(
         base::names(settings),
-        settings,
+        base::format(settings, scientific = FALSE),
         sep = " = ",
         collapse = '\n'
       )
     ) %>%
     base::cat(file = datfile);
+
+    additional_settings <- base::list(...);
+
+    for (i in seq_along(additional_settings)) {
+      base::paste(
+        base::names(additional_settings[[i]]),
+        base::format(additional_settings[[i]], scientific = FALSE),
+        sep = " = ",
+        collapse = "\n"
+      ) %>%
+      base::paste0("[", base::names(additional_settings[i]), "]\n", ., "\n\n") %>%
+      base::cat(file = datfile, append = TRUE);
+    };
 
     spfile <- base::tempfile(tmpdir = dir);
 
@@ -163,7 +187,7 @@ setMethod(
       base::matrix(nrow = nfeatures, byrow = TRUE)      %>%
       base::as.data.frame(stringsAsFactors = FALSE)     %>%
       readr::type_convert(.) %>%
-      magrittr::set_colnames(
+      magrittr::set_colnames(.,
         base::c(
           "weight",
           "dist_sum",
@@ -223,7 +247,15 @@ setMethod(
       ) %>%
       raster::readAll(object = .);
 
-    run_info_file <- base::paste0(resstem, ".run_info.txt")
+    layer_names <-
+      base::names(rasters) %>%
+      base::strsplit("\\.") %>%
+      base::lapply(function(x) x[2]) %>%
+      base::unlist();
+
+    rasters %<>% magrittr::set_names(layer_names);
+
+    run_info_file <- base::paste0(resstem, ".run_info.txt");
 
     run_info <-
       readr::read_file(file = run_info_file);

@@ -3,20 +3,25 @@
 \docType{methods}
 \name{zonation}
 \alias{zonation}
+\alias{zonation,RasterBrick-method}
 \alias{zonation,RasterStack-method}
 \alias{zonation,character-method}
 \title{Run the program zonation from R}
 \usage{
 zonation(features, params = NULL, settings = NULL, alpha = 0,
-  dist_smooth = FALSE, kernel_width_mult = 1, command_args = NULL)
+  dist_smooth = FALSE, kernel_width_mult = 1, command_args = NULL, ...)
 
 \S4method{zonation}{RasterStack}(features, params = NULL, settings = NULL,
   alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
-  command_args = NULL)
+  command_args = NULL, ...)
+
+\S4method{zonation}{RasterBrick}(features, params = NULL, settings = NULL,
+  alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
+  command_args = NULL, ...)
 
 \S4method{zonation}{character}(features, params = NULL, settings = NULL,
   alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
-  command_args = NULL)
+  command_args = NULL, ...)
 }
 \arguments{
 \item{features}{RasterStack or file paths of the raster files for features in the conservation plan.}
@@ -32,6 +37,8 @@ zonation(features, params = NULL, settings = NULL, alpha = 0,
 \item{kernel_width_mult}{numeric. factor to multiply feature dispersal kernel widths by.}
 
 \item{command_args}{character string of command line arguments. See zonation manual for details.}
+
+\item{...}{additional settings.}
 }
 \description{
 Run the zonation software for conservation planning on a set of files or raster objects
@@ -40,6 +47,8 @@ and return the output as a list.
 \section{Methods (by class)}{
 \itemize{
 \item \code{RasterStack}: run the program zonation for a RasterStack
+
+\item \code{RasterBrick}: run the program zonation for a RasterStack
 
 \item \code{character}: run the program zonation for raster files
 }}
