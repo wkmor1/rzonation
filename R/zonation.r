@@ -1,7 +1,7 @@
 #' Run the program zonation from R
 #'
-#' Runs the zonation software for conservation planning on a set of GeoTiff files
-#' and returns the output as a list.
+#' Run the zonation software for conservation planning on a set of files or raster objects
+#' and return the output as a list.
 #'
 #' @param features RasterStack or file paths of the raster files for features in the conservation plan.
 #' @param params a matrix of feature parameter values. Matrix must have 5 columns and one row for each feature. If unset all values default to 1.See Zonation manual for details.
@@ -42,9 +42,11 @@ setMethod(
      features, params, settings, alpha, dist_smooth, kernel_width_mult,
      command_args
    ) {
+
      rand_fname <-
-       base::tempfile("feature")
-       raster::writeRaster(
+       base::tempfile("feature");
+
+     raster::writeRaster(
        x         = features,
        file      =
                    base::paste0(
@@ -56,8 +58,8 @@ setMethod(
        suffix    = "names"
      );
 
-     rzonation::zonation(
-       features = base::paste0(
+     features <-
+       base::paste0(
          base::tempdir(),
          "/",
          base::basename(rand_fname),
@@ -65,7 +67,15 @@ setMethod(
          base::names(features),
          ".tif"
        )
-     );
+
+     plan <-
+       rzonation::zonation(
+         features = features
+       );
+
+     base::file.remove(features)
+
+     plan
    }
 );
 
@@ -145,8 +155,10 @@ setMethod(
     ) %>%
     base::system(ignore.stdout = TRUE);
 
+    features_info_file <- base::paste0(resstem, ".features_info.txt")
+
     features_info <-
-      base::paste0(resstem, ".features_info.txt")       %>%
+      features_info_file %>%
       base::scan(skip = 2, what = "char", quiet = TRUE) %>%
       base::matrix(nrow = nfeatures, byrow = TRUE)      %>%
       base::as.data.frame(stringsAsFactors = FALSE)     %>%
@@ -163,9 +175,11 @@ setMethod(
         )
       );
 
+    curves_file <- base::paste0(resstem, ".curves.txt")
+
     curves <-
       readr::read_table(
-        file      = base::paste0(resstem, ".curves.txt"),
+        file      = curves_file,
         col_names = base::c(
                       "prop_landscape_lost",
                       "cost_need_for_top_frac",
@@ -189,7 +203,7 @@ setMethod(
         skip      = 1
       );
 
-    rasters <-
+    raster_files <-
       base::basename(path = resstem) %>%
       base::list.files(
         path = dir,
@@ -200,26 +214,42 @@ setMethod(
         pattern = "\\.tif$",
         x = .,
         value = TRUE
-      ) %>%
-      raster::stack(x = .) %>%
+      )
+
+    rasters <-
+      raster::stack(x = raster_files) %>%
       magrittr::set_names(
         value = base::c("rank", "wrscr")
       ) %>%
       raster::readAll(object = .);
 
+    run_info_file <- base::paste0(resstem, ".run_info.txt")
+
     run_info <-
-      readr::read_file(
-        file = base::paste0(resstem, ".run_info.txt")
-      );
+      readr::read_file(file = run_info_file);
 
-    base::list(
-      features_info = features_info,
-      curves        = curves,
-      rasters       = rasters,
-      run_info      = run_info
-    ) %>%
-    base::structure(class = "zonation");
+    plan <-
+      base::list(
+        features_info = features_info,
+        curves        = curves,
+        rasters       = rasters,
+        run_info      = run_info
+      ) %>%
+      base::structure(class = "zonation");
+
+    base::file.remove(
+      base::c(
+        datfile,
+        spfile,
+        features_info_file,
+        curves_file,
+        raster_files,
+        run_info_file
+      )
+    )
+
+    plan
+
   }
-);
 
-utils::globalVariables("weight")
+);

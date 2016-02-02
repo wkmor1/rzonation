@@ -34,8 +34,8 @@ zonation(features, params = NULL, settings = NULL, alpha = 0,
 \item{command_args}{character string of command line arguments. See zonation manual for details.}
 }
 \description{
-Runs the zonation software for conservation planning on a set of GeoTiff files
-and returns the output as a list.
+Run the zonation software for conservation planning on a set of files or raster objects
+and return the output as a list.
 }
 \section{Methods (by class)}{
 \itemize{
