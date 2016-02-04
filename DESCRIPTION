@@ -1,10 +1,10 @@
 Package: rzonation
 Title: Run Zonation from R
-Version: 0.0.0.9063
+Version: 0.0.0.9064
 Authors@R: person(c("William", "Keith"), "Morris", email = "wkmor1@gmail.com", role = c("aut", "cre"))
 Description: Run the zonation spatial conservation planning software from R.
 Depends:
-    R (>= 3.2.3),
+    R (>= 3.2.2),
 License: MIT + file LICENSE
 LazyData: true
 Imports:
