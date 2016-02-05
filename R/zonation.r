@@ -40,28 +40,31 @@ zonation_raster <-
     features, params, settings, alpha, dist_smooth, kernel_width_mult,
     command_args, ...
   ) {
-    rand_fname <- base::tempfile("feature");
+  rand_fname <- base::tempfile("feature");
 
-    feature_files <- base::paste0(rand_fname, ".tif");
+  feature_files <- base::paste0(rand_fname, ".tif");
 
-    raster::writeRaster(
-      x         = features,
-      file      = feature_files,
-      overwrite = TRUE,
-      bylayer   = TRUE,
-      suffix    = "names"
-    );
+  raster::writeRaster(
+    x         = features,
+    file      = feature_files,
+    overwrite = TRUE,
+    bylayer   = TRUE,
+    suffix    = "names"
+  );
+
+  feature_files <-
+    base::paste0(
+      base::tempdir(),
+      "/",
+      base::basename(rand_fname),
+      "_",
+      base::names(features),
+      ".tif"
+    )
 
   plan <-
     zonation(
-      features = base::paste0(
-        base::tempdir(),
-        "/",
-        base::basename(rand_fname),
-        "_",
-        base::names(features),
-        ".tif"
-      ),
+      features = feature_files,
       params,
       settings,
       alpha,
@@ -242,18 +245,8 @@ setMethod(
 
     rasters <-
       raster::stack(x = raster_files) %>%
-      magrittr::set_names(
-        value = base::c("rank", "wrscr")
-      ) %>%
-      raster::readAll(object = .);
-
-    layer_names <-
-      base::names(rasters) %>%
-      base::strsplit("\\.") %>%
-      base::lapply(function(x) x[2]) %>%
-      base::unlist();
-
-    rasters %<>% magrittr::set_names(layer_names);
+      raster::readAll(object = .) %>%
+      magrittr::set_names(base::c("rank", "wrscr"));
 
     run_info_file <- base::paste0(resstem, ".run_info.txt");
 
