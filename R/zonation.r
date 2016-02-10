@@ -31,7 +31,7 @@ setGeneric(
     features, params = NULL, settings = NULL, alpha = 0, dist_smooth = FALSE,
     kernel_width_mult = 1, command_args = NULL, ...
   ) {
-    standardGeneric("zonation")
+    standardGeneric("zonation");
   }
 );
 
@@ -40,7 +40,11 @@ zonation_raster <-
     features, params, settings, alpha, dist_smooth, kernel_width_mult,
     command_args, ...
   ) {
-  rand_fname <- base::tempfile("feature");
+  feature_dir <- base::tempfile("");
+
+  base::dir.create(feature_dir);
+
+  rand_fname <- base::tempfile("feature", feature_dir);
 
   feature_files <- base::paste0(rand_fname, ".tif");
 
@@ -54,13 +58,13 @@ zonation_raster <-
 
   feature_files <-
     base::paste0(
-      base::tempdir(),
+      base::dirname(feature_files),
       "/",
       base::basename(rand_fname),
       "_",
       base::names(features),
       ".tif"
-    )
+    );
 
   plan <-
     zonation(
@@ -74,10 +78,11 @@ zonation_raster <-
       ...
     );
 
-  base::file.remove(feature_files);
+  base::unlink(feature_dir, TRUE);
 
   plan;
-}
+
+};
 
 #' @describeIn zonation run the program zonation for a RasterStack
 setMethod(
@@ -103,12 +108,16 @@ setMethod(
   ) {
     zp <- base::getOption("rzonation.path");
     if (!base::nzchar(zp)) base::stop("zonation binary not found");
-    dir <- base::tempdir();
+
+    dir <- base::tempfile("");
+
+    base::dir.create(dir);
+
     datfile <- base::tempfile(tmpdir = dir);
 
     if (base::is.null(settings)) {
       settings <- base::list();
-    }
+    };
 
     settings %<>%
       bind_if_not_in("removal rule", 1) %>%
@@ -130,7 +139,7 @@ setMethod(
 
     additional_settings <- base::list(...);
 
-    for (i in seq_along(additional_settings)) {
+    for (i in base::seq_along(additional_settings)) {
       base::paste(
         base::names(additional_settings[[i]]),
         base::format(additional_settings[[i]], scientific = FALSE),
@@ -157,8 +166,8 @@ setMethod(
         stop("params must be a 5 * nfeatures matrix");
       }
       base::data.frame(params) %>%
-      do.call(paste, .) %>%
-      paste(features, collapse = '\n');
+      base::do.call(base::paste, .) %>%
+      base::paste(features, collapse = '\n');
     } else {
       base::paste0("1 1 1 1 1 ", features, "\n", collapse = "");
     } %>%
@@ -166,7 +175,9 @@ setMethod(
 
     resstem <- base::tempfile(tmpdir = dir);
 
-    if (is.null(command_args)) command_args <- "--use-threads=1";
+    if (is.null(command_args)) {
+      command_args <- "--use-threads=1"
+    };
 
     base::paste(
       base::getOption("rzonation.path"),
@@ -182,7 +193,7 @@ setMethod(
     ) %>%
     base::system(ignore.stdout = TRUE);
 
-    features_info_file <- base::paste0(resstem, ".features_info.txt")
+    features_info_file <- base::paste0(resstem, ".features_info.txt");
 
     features_info <-
       features_info_file %>%
@@ -202,7 +213,7 @@ setMethod(
         )
       );
 
-    curves_file <- base::paste0(resstem, ".curves.txt")
+    curves_file <- base::paste0(resstem, ".curves.txt");
 
     curves <-
       readr::read_table(
@@ -241,7 +252,7 @@ setMethod(
         pattern = "\\.tif$",
         x = .,
         value = TRUE
-      )
+      );
 
     rasters <-
       raster::stack(x = raster_files) %>%
@@ -262,18 +273,9 @@ setMethod(
       ) %>%
       base::structure(class = "zonation");
 
-    base::file.remove(
-      base::c(
-        datfile,
-        spfile,
-        features_info_file,
-        curves_file,
-        raster_files,
-        run_info_file
-      )
-    )
+    base::unlink(dir, TRUE);
 
-    plan
+    plan;
 
   }
 
