@@ -111,10 +111,9 @@ setMethod(
     zp <- base::getOption("rzonation.path");
     if (!base::nzchar(zp)) base::stop("zonation binary not found");
 
-    dir <- base::tempfile("");
-
     if (is.null(dir)){
-      dir <- base::tempdir();
+      dir <- base::tempfile("");
+      base::dir.create(dir);
       datfile <- base::tempfile(tmpdir = dir);
     } else {
       datfile <- base::tempfile("datfile", tmpdir = dir);
