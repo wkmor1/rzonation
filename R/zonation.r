@@ -9,6 +9,7 @@
 #' @param alpha numeric uncertainty parameter.
 #' @param dist_smooth logical. should distribution smoothing be used.
 #' @param kernel_width_mult numeric. factor to multiply feature dispersal kernel widths by.
+#' @param dir a directory to house tmp files.
 #' @param command_args character string of command line arguments. See zonation manual for details.
 #' @param ... additional settings.
 #'
@@ -28,7 +29,7 @@
 setGeneric(
   "zonation",
   function(
-    features, params = NULL, settings = NULL, alpha = 0, dist_smooth = FALSE,
+    features, params = NULL, settings = NULL, dir = NULL, alpha = 0, dist_smooth = FALSE,
     kernel_width_mult = 1, command_args = NULL, ...
   ) {
     standardGeneric("zonation");
@@ -37,7 +38,7 @@ setGeneric(
 
 zonation_raster <-
   function(
-    features, params, settings, alpha, dist_smooth, kernel_width_mult,
+    features, params, settings, dir, alpha, dist_smooth, kernel_width_mult,
     command_args, ...
   ) {
   feature_dir <- base::tempfile("");
@@ -71,6 +72,7 @@ zonation_raster <-
       features = feature_files,
       params,
       settings,
+      dir,
       alpha,
       dist_smooth,
       kernel_width_mult,
@@ -103,7 +105,7 @@ setMethod(
   "zonation",
   base::c(features = "character"),
   function(
-    features, params, settings, alpha, dist_smooth, kernel_width_mult,
+    features, params, settings, dir, alpha, dist_smooth, kernel_width_mult,
     command_args, ...
   ) {
     zp <- base::getOption("rzonation.path");
@@ -111,9 +113,12 @@ setMethod(
 
     dir <- base::tempfile("");
 
-    base::dir.create(dir);
-
-    datfile <- base::tempfile(tmpdir = dir);
+    if (is.null(dir)){
+      dir <- base::tempdir();
+      datfile <- base::tempfile(tmpdir = dir);
+    } else {
+      datfile <- base::tempfile("datfile", tmpdir = dir);
+    }
 
     if (base::is.null(settings)) {
       settings <- base::list();
