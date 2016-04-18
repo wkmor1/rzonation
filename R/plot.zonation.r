@@ -47,10 +47,24 @@ plot.zonation <-
     }
 
        base::colnames(curves) <- header
-       curves[,base::c("prop_landscape_lost",base::colnames(curves)[features])] %>%
-       reshape2::melt(id.vars='prop_landscape_lost',
-                      measure.vars=base::colnames(.)[-1])%>%
-       ggplot2::ggplot(ggplot2::aes_(x=~prop_landscape_lost, y=~value, colour=~variable),...)+
+       if (base::length(features)>9){
+         cat('Too many features, plotting the mean\n')
+         dat <- curves[,base::c("prop_landscape_lost","ave_prop_rem",base::colnames(curves)[features])] %>%
+         reshape2::melt(measure.vars=base::colnames(.)[-1:-2])
+         labs <- base::c("ave_prop_rem","features","features")
+         dat %>%
+           ggplot2::ggplot(ggplot2::aes_(x=~prop_landscape_lost, y=~value, group=~variable))+
+           ggplot2::geom_line(colour="#00000015")+
+           ggplot2::geom_line(ggplot2::aes_(x=~prop_landscape_lost, y=~ave_prop_rem),colour='red',size=1.5)+
+           ggplot2::ggtitle("mean performance")+
+           ggplot2::theme_bw() +
+           ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                          panel.grid.minor = ggplot2::element_blank())
+       } else {
+         dat <- curves[,base::c("prop_landscape_lost",base::colnames(curves)[features])] %>%
+           reshape2::melt(measure.vars=base::colnames(.)[-1])
+       dat %>%
+       ggplot2::ggplot(ggplot2::aes_(x=~prop_landscape_lost, y=~value, colour=~variable))+
        ggplot2::geom_line()+
        ggplot2::scale_colour_manual(name=legend.title,
                           values=colours)+
@@ -58,4 +72,5 @@ plot.zonation <-
        ggplot2::theme_bw() +
        ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
                       panel.grid.minor = ggplot2::element_blank())
-  }
+      }
+}
