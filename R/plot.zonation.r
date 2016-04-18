@@ -20,12 +20,13 @@
 #' @export
 
 plot.zonation <-
-  function(obj, features=NULL, feature.names=NULL,
+  function(obj, features=NULL, feature.names=NULL,invert=TRUE,
            main='Performance curves',
            legend.title='Performance',
            blackwhite=FALSE, ...) {
 
     curves <- obj$curves
+    if(invert)curves$prop_landscape_lost <- base::rev(curves$prop_landscape_lost)
     header <- base::c("prop_landscape_lost",
                 "cost_need_for_top_frac",
                 "min_prop_rem",
@@ -50,7 +51,7 @@ plot.zonation <-
        if (base::length(features)>9){
          cat('Too many features, plotting the mean\n')
          dat <- curves[,base::c("prop_landscape_lost","ave_prop_rem",base::colnames(curves)[features])] %>%
-         reshape2::melt(measure.vars=base::colnames(.)[-1:-2])
+                reshape2::melt(measure.vars=base::colnames(.)[-1:-2])
          labs <- base::c("ave_prop_rem","features","features")
          dat %>%
            ggplot2::ggplot(ggplot2::aes_(x=~prop_landscape_lost, y=~value, group=~variable))+
