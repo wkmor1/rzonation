@@ -26,28 +26,28 @@ plot.zonation <-
            blackwhite=FALSE, ...) {
 
     curves <- obj$curves
-    header <- c("prop_landscape_lost",
+    header <- base::c("prop_landscape_lost",
                 "cost_need_for_top_frac",
                 "min_prop_rem",
                 "ave_prop_rem",
                 "w_prop_rem",
                 "ext_1",
                 "ext_2")
-    if(is.null(features)){ features <- c(length(header)+1):ncol(curves)
+    if(base::is.null(features)){ features <- base::c(base::length(header)+1):base::ncol(curves)
     } else { features = features
     }
-    if(is.null(feature.names)){ header <- c(header, paste("f", 1:(ncol(curves) - length(header)), sep=""))
-    } else { header <- c(header, feature.names)
+    if(base::is.null(feature.names)){ header <- base::c(header, paste("f", 1:(base::ncol(curves) - base::length(header)), sep=""))
+    } else { header <- base::c(header, feature.names)
     }
     if (blackwhite) {
-      colours <- grey.colors(n=length(unique(features)))
+      colours <- grDevices::grey.colors(n=base::length(base::unique(features)))
     } else {
-      colours <- suppressWarnings(RColorBrewer::brewer.pal(length(unique(features)),
+      colours <- base::suppressWarnings(RColorBrewer::brewer.pal(base::length(base::unique(features)),
                                                            "Set1"))
     }
 
-    colnames(curves) <- header
-       curves[,c("prop_landscape_lost",colnames(curves)[features])] %>%
+       base::colnames(curves) <- header
+       curves[,base::c("prop_landscape_lost",base::colnames(curves)[features])] %>%
        reshape2::melt(id.vars='prop_landscape_lost',
                       measure.vars=base::colnames(.)[-1])%>%
        ggplot2::ggplot(ggplot2::aes_(x=~prop_landscape_lost, y=~value, colour=~variable),...)+

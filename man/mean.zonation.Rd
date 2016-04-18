@@ -4,13 +4,15 @@
 \alias{mean.zonation}
 \title{Calculate mean proportion remaining}
 \usage{
-\method{mean}{zonation}(x, p = 0.1, method = c("arithmetic", "geometric"),
-  ...)
+\method{mean}{zonation}(x, p = 0.1, features = NULL,
+  method = c("arithmetic", "geometric"), ...)
 }
 \arguments{
 \item{x}{a zonation object.}
 
 \item{p}{numeric proportion of landscape protected.}
+
+\item{features}{numeric vector of features id number (order features are added to rzonation)}
 
 \item{method}{the method of calculating the mean arithmetic or geometric.}
 
