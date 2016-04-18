@@ -57,7 +57,7 @@ plot.zonation <-
            ggplot2::ggplot(ggplot2::aes_(x=~prop_landscape_lost, y=~value, group=~variable))+
            ggplot2::geom_line(colour="#00000025")+
            ggplot2::geom_line(ggplot2::aes_(x=~prop_landscape_lost, y=~ave_prop_rem),colour='red',size=1.5)+
-           ggplot2::ggtitle("mean performance")+
+           ggplot2::ggtitle(main)+
            ggplot2::theme_bw() +
            ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
                           panel.grid.minor = ggplot2::element_blank())+
