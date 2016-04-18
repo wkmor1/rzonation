@@ -26,7 +26,7 @@ plot.zonation <-
            blackwhite=FALSE, ...) {
 
     curves <- obj$curves
-    if(invert)curves$prop_landscape_lost <- base::rev(curves$prop_landscape_lost)
+    if(invert) curves$prop_landscape_lost <- 1- curves$prop_landscape_lost
     header <- base::c("prop_landscape_lost",
                 "cost_need_for_top_frac",
                 "min_prop_rem",
@@ -55,12 +55,14 @@ plot.zonation <-
          labs <- base::c("ave_prop_rem","features","features")
          dat %>%
            ggplot2::ggplot(ggplot2::aes_(x=~prop_landscape_lost, y=~value, group=~variable))+
-           ggplot2::geom_line(colour="#00000015")+
+           ggplot2::geom_line(colour="#00000025")+
            ggplot2::geom_line(ggplot2::aes_(x=~prop_landscape_lost, y=~ave_prop_rem),colour='red',size=1.5)+
            ggplot2::ggtitle("mean performance")+
            ggplot2::theme_bw() +
            ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
-                          panel.grid.minor = ggplot2::element_blank())
+                          panel.grid.minor = ggplot2::element_blank())+
+           ggplot2::xlab("Prop. of extent under conservation") +
+           ggplot2::ylab("Prop. of distributions remaining")
        } else {
          dat <- curves[,base::c("prop_landscape_lost",base::colnames(curves)[features])] %>%
            reshape2::melt(measure.vars=base::colnames(.)[-1])
@@ -72,6 +74,8 @@ plot.zonation <-
        ggplot2::ggtitle(main)+
        ggplot2::theme_bw() +
        ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
-                      panel.grid.minor = ggplot2::element_blank())
+                      panel.grid.minor = ggplot2::element_blank())+
+         ggplot2::xlab("Prop. of extent under conservation") +
+         ggplot2::ylab("Prop. of distributions remaining")
       }
 }
