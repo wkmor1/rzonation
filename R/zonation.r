@@ -114,10 +114,9 @@ setMethod(
     if (is.null(dir)){
       dir <- base::tempfile("");
       base::dir.create(dir);
-      datfile <- base::tempfile(tmpdir = dir);
-    } else {
-      datfile <- base::tempfile("datfile", tmpdir = dir);
     }
+
+    datfile <- base::tempfile("datfile",tmpdir = dir);
 
     if (base::is.null(settings)) {
       settings <- base::list();
@@ -154,9 +153,7 @@ setMethod(
       base::cat(file = datfile, append = TRUE);
     };
 
-    spfile <- base::tempfile(tmpdir = dir);
-
-    nfeatures <- base::length(features);
+    spfile <- base::tempfile("spfile",tmpdir = dir);
 
     if (!is.null(params)) {
       if (
@@ -171,13 +168,14 @@ setMethod(
       }
       base::data.frame(params) %>%
       base::do.call(base::paste, .) %>%
-      base::paste(features, collapse = '\n');
+      base::paste(features, collapse = '\n')%>%
+      base::cat(file = spfile);
     } else {
-      base::paste0("1 1 1 1 1 ", features, "\n", collapse = "");
-    } %>%
-    base::cat(file = spfile);
+      base::paste0("1 1 1 1 1 ", features, "\n", collapse = "")%>%
+      base::cat(file = spfile);
+    }
 
-    resstem <- base::tempfile(tmpdir = dir);
+    resstem <- base::tempfile("resstem",tmpdir = dir);
 
     if (is.null(command_args)) {
       command_args <- "--use-threads=1"
