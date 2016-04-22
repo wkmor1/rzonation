@@ -24,8 +24,6 @@
 \item{blackwhite}{FALSE make plot black and white.}
 
 \item{...}{other plot arguments.}
-
-\item{features}{a character vector of names that correlate to biodiversity feature names (this is to make pretty plots).}
 }
 \description{
 Plot a zonation object using ggplot

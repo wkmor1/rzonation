@@ -47,7 +47,7 @@ mean.zonation <-
       base::log() %>%
       base::as.numeric() %>%
       (function(x){
-        if(feature=='ave_prop_rem')
+        if(features=='ave_prop_rem')
           base::mean(x, na.rm = TRUE)
         else x
         }) %>%
