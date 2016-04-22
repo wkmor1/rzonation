@@ -41,9 +41,12 @@ zonation_raster <-
     features, params, settings, dir, alpha, dist_smooth, kernel_width_mult,
     command_args, ...
   ) {
+  if (base::is.null(dir)){
   feature_dir <- base::tempfile("");
-
   base::dir.create(feature_dir);
+  } else {
+    feature_dir <- dir;
+  }
 
   rand_fname <- base::tempfile("feature", feature_dir);
 
@@ -111,12 +114,12 @@ setMethod(
     zp <- base::getOption("rzonation.path");
     if (!base::nzchar(zp)) base::stop("zonation binary not found");
 
-    if (is.null(dir)){
+    if (base::is.null(dir)){
       dir <- base::tempfile("");
       base::dir.create(dir);
     }
 
-    datfile <- base::tempfile("datfile",tmpdir = dir);
+    datfile <- base::tempfile(tmpdir = dir);
 
     if (base::is.null(settings)) {
       settings <- base::list();
@@ -153,7 +156,9 @@ setMethod(
       base::cat(file = datfile, append = TRUE);
     };
 
-    spfile <- base::tempfile("spfile",tmpdir = dir);
+    spfile <- base::tempfile(tmpdir = dir);
+
+    nfeatures <- base::length(features);
 
     if (!is.null(params)) {
       if (
@@ -175,7 +180,7 @@ setMethod(
       base::cat(file = spfile);
     }
 
-    resstem <- base::tempfile("resstem",tmpdir = dir);
+    resstem <- base::tempfile(tmpdir = dir);
 
     if (is.null(command_args)) {
       command_args <- "--use-threads=1"

@@ -4,9 +4,13 @@
 #'
 #' @param obj a zonation object.
 #' @param features a numeric vector of columns to call from curves data.frame.
+#' @param feature.names character vector of feature names to select for plotting
 #' @param features a character vector of names that correlate to biodiversity feature names (this is to make pretty plots).
+#' @param invert logical invert x-axis.
+#' @param main title of plot, default is 'Performance curves'.
+#' @param legend.title title of legend, default is 'Performance'.
 #' @param blackwhite FALSE make plot black and white.
-#' @param ... other arguments.
+#' @param ... other plot arguments.
 #'
 #'@importFrom ggplot2 ggplot
 #'
