@@ -2,8 +2,8 @@
 
 S3method(ggplot,zonation)
 S3method(mean,zonation)
-S3method(plot,zonation)
 S3method(summary,zonation)
+export(plot_curves)
 export(zonation)
 importFrom(ggplot2,ggplot)
 importFrom(magrittr,"%<>%")

@@ -2,7 +2,7 @@
 #'
 #' Plot a zonation object using ggplot
 #'
-#' @param obj a zonation object.
+#' @param x a zonation object.
 #' @param features a numeric vector of columns to call from curves data.frame.
 #' @param feature.names character vector of feature names to select for plotting
 #' @param invert logical invert x-axis.
@@ -18,17 +18,17 @@
 #' r1 <- raster(matrix(runif(200^2, 0, 1), 200))
 #' r2 <- raster(matrix(runif(200^2, 0, 1), 200))
 #' plan <- rzonation::zonation(stack(r1, r2))
-#' plot(plan)
+#' plot_curves(plan)
 #'
 #' @export
 
-plot.zonation <-
-  function(obj, features=NULL, feature.names=NULL,invert=TRUE,
+plot_curves <-
+  function(x, features=NULL, feature.names=NULL,invert=TRUE,
            main='Performance curves',
            legend.title='Performance',
            blackwhite=FALSE, ...) {
 
-    curves <- obj$curves
+    curves <- x$curves
     if(invert) curves$prop_landscape_lost <- 1- curves$prop_landscape_lost
     header <- base::c("prop_landscape_lost",
                 "cost_need_for_top_frac",
