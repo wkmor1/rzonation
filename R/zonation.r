@@ -117,6 +117,9 @@ setMethod(
     if (base::is.null(dir)){
       dir <- base::tempfile("");
       base::dir.create(dir);
+      dir_remove <- TRUE;
+    } else {
+      dir_remove <- FALSE;
     }
 
     datfile <- base::tempfile(tmpdir = dir);
@@ -280,7 +283,7 @@ setMethod(
       ) %>%
       base::structure(class = "zonation");
 
-    base::unlink(dir, TRUE);
+    if(dir_remove) base::unlink(dir, TRUE);
 
     plan;
 
