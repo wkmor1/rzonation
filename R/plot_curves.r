@@ -29,7 +29,10 @@ plot_curves <-
            blackwhite=FALSE, ...) {
 
     curves <- x$curves
-    if(invert) curves$prop_landscape_lost <- 1- curves$prop_landscape_lost
+    if(invert) {
+      curves$prop_landscape_lost <- 1- curves$prop_landscape_lost
+      yl <- "Prop. of distributions protected"
+    } else { yl <- "Prop. of distributions remaining"}
     header <- base::c("prop_landscape_lost",
                 "cost_need_for_top_frac",
                 "min_prop_rem",
