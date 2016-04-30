@@ -44,8 +44,10 @@ zonation_raster <-
   if (base::is.null(dir)){
   feature_dir <- base::tempfile("");
   base::dir.create(feature_dir);
+  dir_remove <- TRUE;
   } else {
     feature_dir <- dir;
+    dir_remove <- FALSE;
   }
 
   rand_fname <- base::tempfile("feature", feature_dir);
@@ -83,7 +85,7 @@ zonation_raster <-
       ...
     );
 
-  base::unlink(feature_dir, TRUE);
+  if(dir_remove)base::unlink(feature_dir, TRUE);
 
   plan;
 
