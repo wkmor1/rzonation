@@ -10,19 +10,19 @@
 \usage{
 zonation(features, params = NULL, settings = NULL, dir = NULL,
   alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
-  command_args = NULL, ...)
+  command_args = NULL, additional_settings = NULL)
 
 \S4method{zonation}{RasterStack}(features, params = NULL, settings = NULL,
   dir = NULL, alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
-  command_args = NULL, ...)
+  command_args = NULL, additional_settings = NULL)
 
 \S4method{zonation}{RasterBrick}(features, params = NULL, settings = NULL,
   dir = NULL, alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
-  command_args = NULL, ...)
+  command_args = NULL, additional_settings = NULL)
 
 \S4method{zonation}{character}(features, params = NULL, settings = NULL,
   dir = NULL, alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
-  command_args = NULL, ...)
+  command_args = NULL, additional_settings = NULL)
 }
 \arguments{
 \item{features}{RasterStack or file paths of the raster files for features in the conservation plan.}
@@ -41,7 +41,7 @@ zonation(features, params = NULL, settings = NULL, dir = NULL,
 
 \item{command_args}{character string of command line arguments. See zonation manual for details.}
 
-\item{...}{additional settings.}
+\item{additional_settings}{additional settings.}
 }
 \description{
 Run the zonation software for conservation planning on a set of files or raster objects

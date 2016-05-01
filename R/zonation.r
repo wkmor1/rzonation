@@ -11,7 +11,7 @@
 #' @param kernel_width_mult numeric. factor to multiply feature dispersal kernel widths by.
 #' @param dir a directory to house tmp files.
 #' @param command_args character string of command line arguments. See zonation manual for details.
-#' @param ... additional settings.
+#' @param additional_settings additional settings.
 #'
 #' @importFrom raster readAll stack writeRaster
 #' @importFrom readr read_file read_table type_convert
@@ -30,7 +30,7 @@ setGeneric(
   "zonation",
   function(
     features, params = NULL, settings = NULL, dir = NULL, alpha = 0, dist_smooth = FALSE,
-    kernel_width_mult = 1, command_args = NULL, ...
+    kernel_width_mult = 1, command_args = NULL, additional_settings=NULL
   ) {
     standardGeneric("zonation");
   }
@@ -39,7 +39,7 @@ setGeneric(
 zonation_raster <-
   function(
     features, params, settings, dir, alpha, dist_smooth, kernel_width_mult,
-    command_args, ...
+    command_args, additional_settings
   ) {
   if (base::is.null(dir)){
   feature_dir <- base::tempfile("");
@@ -82,7 +82,7 @@ zonation_raster <-
       dist_smooth,
       kernel_width_mult,
       command_args,
-      ...
+      additional_settings
     );
 
   if(dir_remove)base::unlink(feature_dir, TRUE);
@@ -111,7 +111,7 @@ setMethod(
   base::c(features = "character"),
   function(
     features, params, settings, dir, alpha, dist_smooth, kernel_width_mult,
-    command_args, ...
+    command_args, additional_settings
   ) {
     zp <- base::getOption("rzonation.path");
     if (!base::nzchar(zp)) base::stop("zonation binary not found");
@@ -147,7 +147,10 @@ setMethod(
     ) %>%
     base::cat(file = datfile);
 
-    additional_settings <- base::list(...);
+    if (base::is.null(additional_settings)) {
+      additional_settings <- base::list();
+    };
+    # additional_settings <- (additional_settings);
 
     for (i in base::seq_along(additional_settings)) {
       base::paste(
@@ -268,7 +271,7 @@ setMethod(
     rasters <-
       raster::stack(x = raster_files) %>%
       raster::readAll(object = .) %>%
-      magrittr::set_names(base::names(raster::stack(x = raster_files)));#need a cleaner version of this maybe using gsub.
+      magrittr::set_names(base::names(raster::stack(x = raster_files)));#need a cleaner version of this maybe using gsub
 
     run_info_file <- base::paste0(resstem, ".run_info.txt");
 
