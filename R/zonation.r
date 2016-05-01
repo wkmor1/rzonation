@@ -143,8 +143,7 @@ setMethod(
         base::names(settings),
         base::format(settings, scientific = FALSE),
         sep = " = ",
-        collapse = '\n'
-      )
+        collapse = '\n'),'\n'
     ) %>%
     base::cat(file = datfile);
 
@@ -269,7 +268,7 @@ setMethod(
     rasters <-
       raster::stack(x = raster_files) %>%
       raster::readAll(object = .) %>%
-      magrittr::set_names(base::c("rank", "wrscr"));
+      magrittr::set_names(base::names(raster::stack(x = raster_files)));#need a cleaner version of this maybe using gsub.
 
     run_info_file <- base::paste0(resstem, ".run_info.txt");
 
