@@ -31,5 +31,5 @@ get_rank.default <- function(x) {
 #' @export
 
 get_rank.zonation <- function(x) {
-  raster(x$rasters$rank)
+  raster(x$rasters, 1)
 }
