@@ -5,7 +5,7 @@
 #' @param data a zonation object.
 #' @param ... other arguments.
 #'
-#'@importFrom ggplot2 ggplot
+#' @importFrom ggplot2 ggplot
 #'
 #' @examples
 #' library(raster)
