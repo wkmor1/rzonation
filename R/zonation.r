@@ -9,7 +9,7 @@
 #' @param alpha numeric uncertainty parameter.
 #' @param dist_smooth logical. should distribution smoothing be used.
 #' @param kernel_width_mult numeric. factor to multiply feature dispersal kernel widths by.
-#' @param command_args character string of command line arguments. See zonation manual for details.
+#' @param command_args character vector of command line arguments. See zonation manual for details.
 #' @param ... additional settings.
 #'
 #' @importFrom raster readAll stack writeRaster
@@ -179,19 +179,30 @@ setMethod(
       command_args <- "--use-threads=1"
     };
 
-    base::paste(
-      base::getOption("rzonation.path"),
-      "-r",
-      datfile,
-      spfile,
-      resstem,
-      alpha,
-      as.numeric(dist_smooth),
-      kernel_width_mult,
-      1,
-      command_args
-    ) %>%
-    base::system(ignore.stdout = TRUE);
+    zig_args <-
+      base::c(
+        "-r",
+        datfile,
+        spfile,
+        resstem,
+        alpha,
+        as.numeric(dist_smooth),
+        kernel_width_mult,
+        1,
+        command_args
+      );
+
+    zig_out <-
+      base::try(
+        base::system2(
+          base::getOption("rzonation.path"),
+          zig_args,
+          stdout = TRUE,
+          stderr = TRUE,
+        )
+      );
+
+    if (class(zig_out) == "try-error") return(NA_real_)
 
     features_info_file <- base::paste0(resstem, ".features_info.txt");
 
