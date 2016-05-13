@@ -9,14 +9,9 @@
 #' @param alpha numeric uncertainty parameter.
 #' @param dist_smooth logical. should distribution smoothing be used.
 #' @param kernel_width_mult numeric. factor to multiply feature dispersal kernel widths by.
-<<<<<<< HEAD
-#' @param command_args character vector of command line arguments. See zonation manual for details.
-#' @param ... additional settings.
-=======
 #' @param dir a directory to house tmp files.
 #' @param command_args character string of command line arguments. See zonation manual for details.
 #' @param additional_settings additional settings.
->>>>>>> 624997c621eeabf0ca17c95465a6b8447466573e
 #'
 #' @importFrom raster readAll stack writeRaster
 #' @importFrom readr read_file read_table type_convert
@@ -155,7 +150,6 @@ setMethod(
     if (base::is.null(additional_settings)) {
       additional_settings <- base::list();
     };
-    # additional_settings <- (additional_settings);
 
     for (i in base::seq_along(additional_settings)) {
       base::paste(
@@ -287,7 +281,7 @@ setMethod(
     rasters <-
       raster::stack(x = raster_files) %>%
       raster::readAll(object = .) %>%
-      magrittr::set_names(base::names(raster::stack(x = raster_files)));#need a cleaner version of this maybe using gsub
+      magrittr::set_names(base::names(raster::stack(x = raster_files)));
 
     run_info_file <- base::paste0(resstem, ".run_info.txt");
 
