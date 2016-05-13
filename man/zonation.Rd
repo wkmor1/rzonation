@@ -8,20 +8,21 @@
 \alias{zonation,character-method}
 \title{Run the program zonation from R}
 \usage{
-zonation(features, params = NULL, settings = NULL, alpha = 0,
-  dist_smooth = FALSE, kernel_width_mult = 1, command_args = NULL, ...)
+zonation(features, params = NULL, settings = NULL, dir = NULL,
+  alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
+  command_args = NULL, additional_settings = NULL)
 
 \S4method{zonation}{RasterStack}(features, params = NULL, settings = NULL,
-  alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
-  command_args = NULL, ...)
+  dir = NULL, alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
+  command_args = NULL, additional_settings = NULL)
 
 \S4method{zonation}{RasterBrick}(features, params = NULL, settings = NULL,
-  alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
-  command_args = NULL, ...)
+  dir = NULL, alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
+  command_args = NULL, additional_settings = NULL)
 
 \S4method{zonation}{character}(features, params = NULL, settings = NULL,
-  alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
-  command_args = NULL, ...)
+  dir = NULL, alpha = 0, dist_smooth = FALSE, kernel_width_mult = 1,
+  command_args = NULL, additional_settings = NULL)
 }
 \arguments{
 \item{features}{RasterStack or file paths of the raster files for features in the conservation plan.}
@@ -29,6 +30,8 @@ zonation(features, params = NULL, settings = NULL, alpha = 0,
 \item{params}{a matrix of feature parameter values. Matrix must have 5 columns and one row for each feature. If unset all values default to 1.See Zonation manual for details.}
 
 \item{settings}{a named list of settings equivalent to the zonation settings file (see zonation manual for details and list of settings)}
+
+\item{dir}{a directory to house tmp files.}
 
 \item{alpha}{numeric uncertainty parameter.}
 
@@ -38,7 +41,7 @@ zonation(features, params = NULL, settings = NULL, alpha = 0,
 
 \item{command_args}{character vector of command line arguments. See zonation manual for details.}
 
-\item{...}{additional settings.}
+\item{additional_settings}{additional settings.}
 }
 \description{
 Run the zonation software for conservation planning on a set of files or raster objects

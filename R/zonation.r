@@ -9,8 +9,14 @@
 #' @param alpha numeric uncertainty parameter.
 #' @param dist_smooth logical. should distribution smoothing be used.
 #' @param kernel_width_mult numeric. factor to multiply feature dispersal kernel widths by.
+<<<<<<< HEAD
 #' @param command_args character vector of command line arguments. See zonation manual for details.
 #' @param ... additional settings.
+=======
+#' @param dir a directory to house tmp files.
+#' @param command_args character string of command line arguments. See zonation manual for details.
+#' @param additional_settings additional settings.
+>>>>>>> 624997c621eeabf0ca17c95465a6b8447466573e
 #'
 #' @importFrom raster readAll stack writeRaster
 #' @importFrom readr read_file read_table type_convert
@@ -28,8 +34,8 @@
 setGeneric(
   "zonation",
   function(
-    features, params = NULL, settings = NULL, alpha = 0, dist_smooth = FALSE,
-    kernel_width_mult = 1, command_args = NULL, ...
+    features, params = NULL, settings = NULL, dir = NULL, alpha = 0, dist_smooth = FALSE,
+    kernel_width_mult = 1, command_args = NULL, additional_settings=NULL
   ) {
     standardGeneric("zonation");
   }
@@ -37,12 +43,17 @@ setGeneric(
 
 zonation_raster <-
   function(
-    features, params, settings, alpha, dist_smooth, kernel_width_mult,
-    command_args, ...
+    features, params, settings, dir, alpha, dist_smooth, kernel_width_mult,
+    command_args, additional_settings
   ) {
+  if (base::is.null(dir)){
   feature_dir <- base::tempfile("");
-
   base::dir.create(feature_dir);
+  dir_remove <- TRUE;
+  } else {
+    feature_dir <- dir;
+    dir_remove <- FALSE;
+  }
 
   rand_fname <- base::tempfile("feature", feature_dir);
 
@@ -71,14 +82,15 @@ zonation_raster <-
       features = feature_files,
       params,
       settings,
+      dir,
       alpha,
       dist_smooth,
       kernel_width_mult,
       command_args,
-      ...
+      additional_settings
     );
 
-  base::unlink(feature_dir, TRUE);
+  if(dir_remove)base::unlink(feature_dir, TRUE);
 
   plan;
 
@@ -103,15 +115,19 @@ setMethod(
   "zonation",
   base::c(features = "character"),
   function(
-    features, params, settings, alpha, dist_smooth, kernel_width_mult,
-    command_args, ...
+    features, params, settings, dir, alpha, dist_smooth, kernel_width_mult,
+    command_args, additional_settings
   ) {
     zp <- base::getOption("rzonation.path");
     if (!base::nzchar(zp)) base::stop("zonation binary not found");
 
-    dir <- base::tempfile("");
-
-    base::dir.create(dir);
+    if (base::is.null(dir)){
+      dir <- base::tempfile("");
+      base::dir.create(dir);
+      dir_remove <- TRUE;
+    } else {
+      dir_remove <- FALSE;
+    }
 
     datfile <- base::tempfile(tmpdir = dir);
 
@@ -132,12 +148,14 @@ setMethod(
         base::names(settings),
         base::format(settings, scientific = FALSE),
         sep = " = ",
-        collapse = '\n'
-      )
+        collapse = '\n'),'\n'
     ) %>%
     base::cat(file = datfile);
 
-    additional_settings <- base::list(...);
+    if (base::is.null(additional_settings)) {
+      additional_settings <- base::list();
+    };
+    # additional_settings <- (additional_settings);
 
     for (i in base::seq_along(additional_settings)) {
       base::paste(
@@ -167,11 +185,12 @@ setMethod(
       }
       base::data.frame(params) %>%
       base::do.call(base::paste, .) %>%
-      base::paste(features, collapse = '\n');
+      base::paste(features, collapse = '\n')%>%
+      base::cat(file = spfile);
     } else {
-      base::paste0("1 1 1 1 1 ", features, "\n", collapse = "");
-    } %>%
-    base::cat(file = spfile);
+      base::paste0("1 1 1 1 1 ", features, "\n", collapse = "")%>%
+      base::cat(file = spfile);
+    }
 
     resstem <- base::tempfile(tmpdir = dir);
 
@@ -268,7 +287,7 @@ setMethod(
     rasters <-
       raster::stack(x = raster_files) %>%
       raster::readAll(object = .) %>%
-      magrittr::set_names(base::c("rank", "wrscr"));
+      magrittr::set_names(base::names(raster::stack(x = raster_files)));#need a cleaner version of this maybe using gsub
 
     run_info_file <- base::paste0(resstem, ".run_info.txt");
 
@@ -284,7 +303,7 @@ setMethod(
       ) %>%
       base::structure(class = "zonation");
 
-    base::unlink(dir, TRUE);
+    if(dir_remove) base::unlink(dir, TRUE);
 
     plan;
 
