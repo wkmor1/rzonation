@@ -13,7 +13,7 @@
 #' @param command_args character string of command line arguments. See zonation manual for details.
 #' @param additional_settings additional settings.
 #'
-#' @importFrom raster readAll stack writeRaster
+#' @importFrom raster brick raster readAll stack writeRaster
 #' @importFrom readr read_file read_table type_convert
 #' @importFrom methods setGeneric setMethod
 #' @importFrom rgdal gdalDrivers
@@ -30,7 +30,7 @@ setGeneric(
   "zonation",
   function(
     features, params = NULL, settings = NULL, dir = NULL, alpha = 0, dist_smooth = FALSE,
-    kernel_width_mult = 1, command_args = NULL, additional_settings=NULL
+    kernel_width_mult = 1, command_args = NULL, additional_settings = NULL
   ) {
     standardGeneric("zonation");
   }
@@ -85,7 +85,7 @@ zonation_raster <-
       additional_settings
     );
 
-  if(dir_remove)base::unlink(feature_dir, TRUE);
+  if (dir_remove) base::unlink(feature_dir, TRUE);
 
   plan;
 
@@ -211,11 +211,11 @@ setMethod(
           base::getOption("rzonation.path"),
           zig_args,
           stdout = TRUE,
-          stderr = TRUE,
+          stderr = TRUE
         )
       );
 
-    if (class(zig_out) == "try-error") return(NA_real_)
+    if (class(zig_out) == "try-error") return (NA_real_)
 
     features_info_file <- base::paste0(resstem, ".features_info.txt");
 
@@ -278,10 +278,9 @@ setMethod(
         value = TRUE
       );
 
-    rasters <-
-      raster::stack(x = raster_files) %>%
-      raster::readAll(object = .) %>%
-      magrittr::set_names(base::names(raster::stack(x = raster_files)));
+    rasters <- brick(stack(raster(raster_files[1]), raster(raster_files[2])))
+
+    names(rasters) <- c("rank", "wrscr")
 
     run_info_file <- base::paste0(resstem, ".run_info.txt");
 

@@ -39,7 +39,7 @@ zonation(features, params = NULL, settings = NULL, dir = NULL,
 
 \item{kernel_width_mult}{numeric. factor to multiply feature dispersal kernel widths by.}
 
-\item{command_args}{character vector of command line arguments. See zonation manual for details.}
+\item{command_args}{character string of command line arguments. See zonation manual for details.}
 
 \item{additional_settings}{additional settings.}
 }
