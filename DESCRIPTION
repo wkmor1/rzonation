@@ -1,7 +1,7 @@
 Package: rzonation
 Title: Run Zonation from R
-Version: 0.0.0.9068
-Authors@R: person(c("William", "Keith"), "Morris", email = "wkmor1@gmail.com", role = c("aut", "cre"))
+Version: 0.0.0.9069
+Authors@R: person(c("William", "Keith"), "Morris", email = "willi@mmorris.email", role = c("aut", "cre"))
 Description: Run the zonation spatial conservation planning software from R.
 Depends:
     R (>= 3.2.2),
@@ -9,11 +9,14 @@ License: MIT + file LICENSE
 LazyData: true
 Imports:
     ggplot2,
-    magrittr,
+    grDevices,
     methods,
-    raster,
-    readr,
+    raster, 
+    RColorBrewer,
     rgdal,
     reshape2,
-    RColorBrewer
-RoxygenNote: 5.0.1
+    tools,
+    utils
+RoxygenNote: 7.0.2
+Encoding: UTF-8
+

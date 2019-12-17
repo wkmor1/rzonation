@@ -13,10 +13,11 @@
 #' @param command_args character string of command line arguments. See zonation manual for details.
 #' @param additional_settings additional settings.
 #'
-#' @importFrom raster brick raster readAll stack writeRaster
-#' @importFrom readr read_file read_table type_convert
-#' @importFrom methods setGeneric setMethod
+#' @importFrom raster brick raster stack writeRaster
 #' @importFrom rgdal gdalDrivers
+#' @importFrom methods setGeneric setMethod
+#' @importFrom utils read.table
+#' @importFrom tools file_path_sans_ext
 #'
 #' @examples
 #' library(raster)
@@ -26,33 +27,33 @@
 #'
 #' @export
 
-setGeneric(
+methods::setGeneric(
   "zonation",
   function(
-    features, params = NULL, settings = NULL, dir = NULL, alpha = 0, dist_smooth = FALSE,
-    kernel_width_mult = 1, command_args = NULL, additional_settings = NULL
+    features, params = NULL, settings = NULL, dir = NULL, alpha = 0,
+    dist_smooth = FALSE, kernel_width_mult = 1, command_args = NULL,
+    additional_settings = NULL
   ) {
-    standardGeneric("zonation");
+    standardGeneric("zonation")
   }
-);
+)
 
-zonation_raster <-
-  function(
-    features, params, settings, dir, alpha, dist_smooth, kernel_width_mult,
-    command_args, additional_settings
-  ) {
-  if (base::is.null(dir)){
-  feature_dir <- base::tempfile("");
-  base::dir.create(feature_dir);
-  dir_remove <- TRUE;
+zonation_raster <- function(features, params, settings, dir, alpha, dist_smooth,
+                            kernel_width_mult, command_args,
+                            additional_settings) {
+
+  if (is.null(dir)){
+    feature_dir <- tempfile("")
+    dir.create(feature_dir)
+    dir_remove <- TRUE
   } else {
-    feature_dir <- dir;
-    dir_remove <- FALSE;
+    feature_dir <- dir
+    dir_remove <- FALSE
   }
 
-  rand_fname <- base::tempfile("feature", feature_dir);
+  rand_fname <- tempfile("feature", feature_dir)
 
-  feature_files <- base::paste0(rand_fname, ".tif");
+  feature_files <- paste0(rand_fname, ".tif")
 
   raster::writeRaster(
     x         = features,
@@ -60,111 +61,91 @@ zonation_raster <-
     overwrite = TRUE,
     bylayer   = TRUE,
     suffix    = "names"
-  );
+  )
 
-  feature_files <-
-    base::paste0(
-      base::dirname(feature_files),
-      "/",
-      base::basename(rand_fname),
-      "_",
-      base::names(features),
-      ".tif"
-    );
+  feature_files <- paste0(
+    dirname(feature_files), "/", basename(rand_fname), "_", names(features),
+    ".tif"
+  )
 
-  plan <-
-    zonation(
-      features = feature_files,
-      params,
-      settings,
-      dir,
-      alpha,
-      dist_smooth,
-      kernel_width_mult,
-      command_args,
-      additional_settings
-    );
+  plan <- zonation(
+    features = feature_files, params, settings, dir, alpha, dist_smooth,
+    kernel_width_mult, command_args, additional_settings
+  )
 
-  if (dir_remove) base::unlink(feature_dir, TRUE);
+  if (dir_remove) unlink(feature_dir, TRUE)
 
-  plan;
+  plan
 
-};
+}
 
 #' @describeIn zonation run the program zonation for a RasterStack
-setMethod(
-  "zonation",
-  base::c(features = "RasterStack"),
-  zonation_raster
-);
+methods::setMethod("zonation", c(features = "RasterStack"), zonation_raster)
 
 #' @describeIn zonation run the program zonation for a RasterStack
-setMethod(
-  "zonation",
-  base::c(features = "RasterBrick"),
-  zonation_raster
-);
+methods::setMethod("zonation", c(features = "RasterBrick"), zonation_raster)
 
 #' @describeIn zonation run the program zonation for raster files
-setMethod(
+methods::setMethod(
   "zonation",
-  base::c(features = "character"),
+  c(features = "character"),
   function(
     features, params, settings, dir, alpha, dist_smooth, kernel_width_mult,
     command_args, additional_settings
   ) {
-    zp <- base::getOption("rzonation.path");
-    if (!base::nzchar(zp)) base::stop("zonation binary not found");
+    zp <- getOption("rzonation.path")
+    if (!nzchar(zp)) stop("zonation binary not found")
 
-    if (base::is.null(dir)){
-      dir <- base::tempfile("");
-      base::dir.create(dir);
-      dir_remove <- TRUE;
+    if (is.null(dir)) {
+      dir <- tempfile("")
+      dir.create(dir)
+      dir_remove <- TRUE
     } else {
-      dir_remove <- FALSE;
+      dir_remove <- FALSE
     }
 
-    datfile <- base::tempfile(tmpdir = dir);
+    datfile <- tempfile(tmpdir = dir)
 
-    if (base::is.null(settings)) {
-      settings <- base::list();
-    };
+    if (is.null(settings)) settings <- list()
 
-    settings %<>%
-      bind_if_not_in("removal rule", 1) %>%
-      bind_if_not_in("warp factor", 1000) %>%
-      bind_if_not_in("edge removal", 1) %>%
-      bind_if_not_in("add edge points", 0) %>%
-      bind_if_not_in("annotate name", 0);
+    default_settings <- c(
+      "removal_rule" = 1, "warp factor" = 1000, "edge removal" = 1,
+      "add edge points" = 0, "annotate name" = 0
+    )
 
-    base::paste0(
+    for (i in names(default_settings))
+      if (is.null(settings[[i]])) settings[[i]] <- default_settings[[i]]
+
+    settings <- paste0(
       "[Settings]\n",
-      base::paste(
-        base::names(settings),
-        base::format(settings, scientific = FALSE),
-        sep = " = ",
-        collapse = '\n'),'\n'
-    ) %>%
-    base::cat(file = datfile);
-
-    if (base::is.null(additional_settings)) {
-      additional_settings <- base::list();
-    };
-
-    for (i in base::seq_along(additional_settings)) {
-      base::paste(
-        base::names(additional_settings[[i]]),
-        base::format(additional_settings[[i]], scientific = FALSE),
+      paste(
+        names(settings),
+        format(settings, scientific = FALSE),
         sep = " = ",
         collapse = "\n"
-      ) %>%
-      base::paste0("[", base::names(additional_settings[i]), "]\n", ., "\n\n") %>%
-      base::cat(file = datfile, append = TRUE);
-    };
+      ), "\n"
+    )
 
-    spfile <- base::tempfile(tmpdir = dir);
+    cat(settings, file = datfile)
 
-    nfeatures <- base::length(features);
+    if (is.null(additional_settings)) additional_settings <- list()
+
+    for (i in seq_along(additional_settings)) {
+      additional_setting <- paste(
+        names(additional_settings[[i]]),
+        format(additional_settings[[i]], scientific = FALSE),
+        sep = " = ",
+        collapse = "\n"
+      )
+      additional_setting <- paste0(
+        "[", names(additional_settings[i]), "]\n", additional_setting, "\n\n"
+      )
+      cat(additional_setting, file = datfile, append = TRUE)
+    }
+
+    spfile <- tempfile(tmpdir = dir)
+
+    nfeatures <- length(features)
 
     if (!is.null(params)) {
       if (
@@ -175,131 +156,116 @@ setMethod(
           is.numeric(params)
         )
       ) {
-        stop("params must be a 5 * nfeatures matrix");
+        stop("params must be a 5 * nfeatures matrix")
       }
-      base::data.frame(params) %>%
-      base::do.call(base::paste, .) %>%
-      base::paste(features, collapse = '\n')%>%
-      base::cat(file = spfile);
+
+      params <- data.frame(params)
+      params <- do.call(paste, params)
+      params <- paste(params, features, collapse = '\n')
+
     } else {
-      base::paste0("1 1 1 1 1 ", features, "\n", collapse = "")%>%
-      base::cat(file = spfile);
+
+      params <- paste0("1 1 1 1 1 ", features, "\n", collapse = "")
+
     }
 
-    resstem <- base::tempfile(tmpdir = dir);
+    cat(params, file = spfile)
 
-    if (is.null(command_args)) {
-      command_args <- "--use-threads=1"
-    };
+    resstem <- tempfile(tmpdir = dir)
 
-    zig_args <-
-      base::c(
-        "-r",
-        datfile,
-        spfile,
-        resstem,
-        alpha,
-        as.numeric(dist_smooth),
-        kernel_width_mult,
-        1,
-        command_args
-      );
+    if (is.null(command_args)) command_args <- "--use-threads=1"
+
+    zig_args <- c(
+      "-r", datfile, spfile, resstem, alpha, as.numeric(dist_smooth),
+      kernel_width_mult, 1, command_args
+    )
 
     zig_out <-
-      base::try(
-        base::system2(
-          base::getOption("rzonation.path"),
+      try(
+        system2(
+          getOption("rzonation.path"),
           zig_args,
           stdout = TRUE,
           stderr = TRUE
         )
-      );
+      )
 
     if (class(zig_out) == "try-error") return (NA_real_)
 
-    features_info_file <- base::paste0(resstem, ".features_info.txt");
+    features_info_file <- paste0(resstem, ".features_info.txt")
 
-    features_info <-
-      features_info_file %>%
-      base::scan(skip = 2, what = "char", quiet = TRUE) %>%
-      base::matrix(nrow = nfeatures, byrow = TRUE)      %>%
-      base::as.data.frame(stringsAsFactors = FALSE)     %>%
-      readr::type_convert(.) %>%
-      magrittr::set_colnames(.,
-        base::c(
-          "weight",
-          "dist_sum",
-          "ig_retain",
-          "t_viol_fract_rem",
-          "dist_mean_x",
-          "dist_mean_y",
-          "map_file_name"
+    features_info <- scan(
+      features_info_file, skip = 2, what = "char", quiet = TRUE
+    )
+
+    features_info <- matrix(features_info, nrow = nfeatures, byrow = TRUE)
+    features_info <- as.data.frame(features_info, stringsAsFactors = FALSE)
+    names(features_info) <- c(
+      "weight",
+      "dist_sum",
+      "ig_retain",
+      "t_viol_fract_rem",
+      "dist_mean_x",
+      "dist_mean_y",
+      "map_file_name"
+    )
+
+    for (i in 1:6) {
+      features_info[[i]] <- as.numeric(features_info[[i]])
+    }
+
+    curves_file <- paste0(resstem, ".curves.txt")
+
+    curves <- utils::read.table(
+      curves_file,
+      col.names = c(
+        "prop_landscape_lost",
+        "cost_need_for_top_frac",
+        "min_prop_rem",
+        "ave_prop_rem",
+        "w_prop_rem",
+        "ext_1",
+        "ext_2",
+        paste0(
+          "prop_",
+          tools::file_path_sans_ext(features),
+          "_rem"
         )
-      );
+      ),
+      skip = 1L
+    )
 
-    curves_file <- base::paste0(resstem, ".curves.txt");
+    raster_files <- basename(path = resstem)
+    raster_files <- list.files(
+      path = dir, pattern = raster_files, full.names = TRUE
+    )
+    raster_files <- grep(pattern = "\\.tif$", x = raster_files, value = TRUE)
 
-    curves <-
-      readr::read_table(
-        file      = curves_file,
-        col_names = base::c(
-                      "prop_landscape_lost",
-                      "cost_need_for_top_frac",
-                      "min_prop_rem",
-                      "ave_prop_rem",
-                      "w_prop_rem",
-                      "ext_1",
-                      "ext_2",
-                      base::paste0(
-                        "prop_",
-                        tools::file_path_sans_ext(x = features),
-                        "_rem"
-                      )
-                    ),
-        col_types = {
-                    "d"                   %>%
-                    base::rep(nfeatures)  %>%
-                    base::c("diddddd", .) %>%
-                    base::paste0(collapse = "");
-                  },
-        skip      = 1
-      );
-
-    raster_files <-
-      base::basename(path = resstem) %>%
-      base::list.files(
-        path = dir,
-        pattern = .,
-        full.names = TRUE
-      ) %>%
-      base::grep(
-        pattern = "\\.tif$",
-        x = .,
-        value = TRUE
-      );
-
-    rasters <- brick(stack(raster(raster_files[1]), raster(raster_files[2])))
+    rasters <- raster::brick(
+      raster::stack(
+        raster::raster(raster_files[1]), raster::raster(raster_files[2])
+      )
+    )
 
     names(rasters) <- c("rank", "wrscr")
 
-    run_info_file <- base::paste0(resstem, ".run_info.txt");
+    run_info_file <- paste0(resstem, ".run_info.txt")
 
-    run_info <-
-      readr::read_file(file = run_info_file);
+    run_info <- readLines(run_info_file)
 
-    plan <-
-      base::list(
-        features_info = features_info,
-        curves        = curves,
-        rasters       = rasters,
-        run_info      = run_info
-      ) %>%
-      base::structure(class = "zonation");
+    plan <- list(
+      features_info = features_info,
+      curves        = curves,
+      rasters       = rasters,
+      run_info      = run_info
+    )
 
-    if(dir_remove) base::unlink(dir, TRUE);
+    plan <- structure(plan, class = "zonation")
 
-    plan;
+    if (dir_remove) unlink(dir, TRUE)
+
+    plan
 
   }
 
-);
+)

@@ -23,4 +23,3 @@ library(ggplot2)
 ggplot(plan)
 
 }
-

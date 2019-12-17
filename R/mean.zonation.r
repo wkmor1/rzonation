@@ -2,9 +2,9 @@
 #'
 #' Calculate the mean proportion of features remaining when a given proportion of landscape is protected.
 #'
-#' @param x a zonation object.
-#' @param p numeric proportion of landscape protected.
-#' @param features numeric vector of features id number (order features are added to rzonation)
+#' @param x A zonation object.
+#' @param p Numeric. Proportion of landscape protected.
+#' @param features Numeric Vector. Feature id numbers (order features are added to rzonation)
 #' @param method the method of calculating the mean arithmetic or geometric.
 #' @param ... further arguments passed to or from other methods.
 #'
@@ -17,40 +17,34 @@
 #'
 #' @export
 
-mean.zonation <-
-  function(x, p = .1, features=NULL, method = c("arithmetic", "geometric"), ...) {
-  if (!identical(length(p), 1L) || !base::is.numeric(p)) {
-    base::stop("p must be scalar");
-  }
-  if (p == 0) return(0);
-  if (p == 1) return(1);
-  if (p < 0 || p > 1) base::stop("p must be a proportion");
-  if (is.null(features)){features<-"ave_prop_rem"
-  } else {
-    if (!base::is.numeric(features))base::stop("feature must be a numeric vector column indexs")
-    features <- features + 7
-  }
-  row <-
-    x$curves$prop_landscape_lost %>%
-    magrittr::subtract(1 - p) %>%
-    base::abs() %>%
-    base::which.min() %>%
-    magrittr::extract(x$curves, .,);
+mean.zonation <- function(x, p = .1, features = NULL,
+                          method = c("arithmetic", "geometric"), ...) {
 
-  base::match.arg(method) %>%
-  base::switch(
-    arithmetic =
-      row[features] %>%
-      base::as.numeric(),
-    geometric =
-      row[-1:-7] %>%
-      base::log() %>%
-      base::as.numeric() %>%
-      (function(x){
-        if(features=='ave_prop_rem')
-          base::mean(x, na.rm = TRUE)
-        else x
-        }) %>%
-      base::exp()
-  );
+  if (!identical(length(p), 1L) || !is.numeric(p)) stop("p must be scalar")
+  if (p == 0) return(0L)
+  if (p == 1) return(1L)
+  if (p < 0L || p > 1L) stop("p must be a proportion")
+  if (is.null(features)) {
+    features <- "ave_prop_rem"
+  } else {
+    if (!is.numeric(features)) {
+      stop("feature must be a numeric vector of column indices")
+    }
+    features <- features + 7L
+  }
+
+  rows <- x[["curves"]][["prop_landscape_lost"]]
+  rows <- abs(rows - (1 - p))
+  min_row <- x[["curves"]][which.min(rows), ]
+
+  switch(
+    match.arg(method),
+    arithmetic = as.numeric(min_row[features]),
+    geometric  =
+      if (features == "ave_prop_rem") {
+        exp(mean(log(as.numeric(min_row[-seq.int(1L, 7L)])), na.rm = TRUE))
+      } else {
+        as.numeric(min_row[-seq.int(1L, 7L)])
+      }
+  )
 }

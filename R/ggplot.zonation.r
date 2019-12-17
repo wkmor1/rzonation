@@ -5,7 +5,9 @@
 #' @param data a zonation object.
 #' @param ... other arguments.
 #'
-#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 aes coord_equal element_blank facet_wrap geom_raster
+#' @importFrom ggplot2 ggplot theme theme_bw
+#' @importFrom raster getValues ncell xyFromCell
 #'
 #' @examples
 #' library(raster)
@@ -17,34 +19,24 @@
 #'
 #' @export
 
-ggplot.zonation <-
-  function(data, ...) {
-    data$rasters %>%
-    raster::getValues() %>%
-    base::as.data.frame() %>%
-    utils::stack() %>%
-    magrittr::set_names(
-      base::c('value', 'variable')
-    ) %>%
-    base::cbind(
-      data$rasters %>%
-      raster::ncell() %>%
-      base::seq_len() %>%
-      raster::xyFromCell(data$rasters, .)
-    ) %>%
-    ggplot2::ggplot(
-      ggplot2::aes(x = x, y = y), ...
-    ) +
-    ggplot2::theme_bw() +
-    ggplot2::geom_raster(
-      ggplot2::aes(fill = value)
-    ) +
+ggplot.zonation <- function(data, ...) {
+    r <- data[["rasters"]]
+    ncells <- raster::ncell(r)
+    xy <- raster::xyFromCell(r, seq_len(ncells))
+    r <- raster::getValues(r)
+    r <- as.data.frame(r)
+    r <- utils::stack(r)
+    names(r) <- c("value", "variable")
+    r <- cbind(r, xy)
+
+    ggplot2::ggplot(r) +
+    ggplot2::aes(x = r[["x"]], y = r[["y"]], fill = r[["value"]], ...) +
+    ggplot2::geom_raster() +
     ggplot2::coord_equal() +
-    ggplot2::facet_wrap( ~variable) +
+    ggplot2::facet_wrap(~variable) +
+    ggplot2::theme_bw() +
     ggplot2::theme(
       axis.text  = ggplot2::element_blank(),
       axis.title = ggplot2::element_blank()
     )
   }
-
-utils::globalVariables(base::c("x", "y", "value"))

@@ -1,30 +1,19 @@
 # Check for zig4 binary
 
-.onLoad <-
-  function(libname, pkgname) {
-  op <-
-    base::options()
-  op.rzonation <-
-    base::list(
-      rzonation.path = {
-        if (.Platform$OS.type == "windows") {
-          base::Sys.which("zig4.exe")
-        } else {
-          base::Sys.which("zig4")
-        }
+.onLoad <- function(libname, pkgname) {
+  op <- options()
+  op.rzonation <- list(
+    rzonation.path =
+      if (.Platform$OS.type == "windows") {
+        Sys.which("zig4.exe")
+      } else {
+        Sys.which("zig4")
       }
-    )
-  toset <-
-    op.rzonation   %>%
-    base::names(.) %>%
-    magrittr::is_in(
-      x     = .,
-      table = base::names(op)
-    ) %>%
-    magrittr::not(.);
-  if (base::any(toset)) {
-    base::options(op.rzonation[toset]);
-  };
-  base::invisible();
-  }
+  )
+  toset <- !names(op.rzonation) %in% names(op)
+
+  if (any(toset)) options(op.rzonation[toset])
+
+  invisible()
+}
 

@@ -15,7 +15,4 @@
 #'
 #' @export
 
-summary.zonation <-
-  function(object, ...) {
-    cat(object$run_info)
-  }
+summary.zonation <- function(object, ...) cat(object$run_info)

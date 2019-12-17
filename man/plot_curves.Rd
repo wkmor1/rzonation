@@ -4,16 +4,23 @@
 \alias{plot_curves}
 \title{Plot a zonation object}
 \usage{
-plot_curves(x, features = NULL, feature.names = NULL, invert = TRUE,
-  main = "Performance curves", legend.title = "Performance",
-  blackwhite = FALSE, ...)
+plot_curves(
+  x,
+  features = NULL,
+  feature_names = NULL,
+  invert = TRUE,
+  main = "Performance curves",
+  legend.title = "Performance",
+  blackwhite = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{a zonation object.}
 
 \item{features}{a numeric vector of columns to call from curves data.frame.}
 
-\item{feature.names}{character vector of feature names to select for plotting}
+\item{feature_names}{character vector of feature names to select for plotting}
 
 \item{invert}{logical invert x-axis.}
 
@@ -36,4 +43,3 @@ plan <- rzonation::zonation(stack(r1, r2))
 plot_curves(plan)
 
 }
-

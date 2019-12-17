@@ -24,6 +24,7 @@ Extract the rank raster from a zonation object
 
 \item \code{zonation}: extract the rank raster
 }}
+
 \examples{
 library(raster)
 r1 <- raster(matrix(runif(200^2, 0, 1), 200))
@@ -33,4 +34,3 @@ plan_rank <- get_rank(plan)
 plan_rank
 
 }
-

@@ -16,9 +16,7 @@
 #'
 #' @export
 
-get_rank <- function(x) {
-  UseMethod("get_rank")
-}
+get_rank <- function(x) UseMethod("get_rank")
 
 #' @describeIn get_rank extract the rank raster
 #' @export
@@ -30,4 +28,4 @@ get_rank.default <- function(x) {
 #' @describeIn get_rank extract the rank raster
 #' @export
 
-get_rank.zonation <- function(x) raster(x[["rasters"]], 1L)
+get_rank.zonation <- function(x) raster::raster(x[["rasters"]], 1L)
