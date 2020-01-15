@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/wkmor1/rzonation.svg?branch=master)](https://travis-ci.org/wkmor1/rzonation)
 
-rzonation is an R package for running the [Zonation](http://cbig.it.helsinki.fi/software/zonation/) conservation planning software via R.
+rzonation is an R package for running the [Zonation](https://github.com/cbig/zonation-core) conservation planning software via R.
 
 ## Example usage
 
