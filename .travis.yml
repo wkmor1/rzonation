@@ -14,7 +14,7 @@ addons:
       - gcc-8
       - libgdal-dev
       - libproj-dev
-      - libboost1.67
+      - libboost1.67-all-dev
       - libfftw3-dev
       - libqwt-dev
 
