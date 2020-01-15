@@ -1,67 +1,36 @@
-# .travis.yml using container-based infrastructure
-# based on https://github.com/dmenne/bugsexamples/blob/master/.travis.yml
-# use c as catch-all language
-language: c
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-# use containers
-sudo: false
+language: R
 
-# only run for pushes to master branch
-branches:
-  only:
-   - master
+cache:
+  - packages
 
-# install R: use r-packages-precise (https://cran.r-project.org/bin/linux/ubuntu/precise/)
-# as source which is white listed (https://github.com/travis-ci/apt-source-whitelist/)
 addons:
   apt:
-    sources:
-    - r-packages-precise
     packages:
-    - r-base-dev
-    - r-recommended
-    - pandoc
-    - libgdal-dev
-    - libproj-dev
+      - libgdal-dev
+      - libproj-dev
+      - build-essential
+      - ca-certificates
+      - cmake
+      - libboost-all-dev
+      - libfftw3-dev
+      - libqt4-dev
+      - libqwt-dev
 
-# cache local R libraries directory:
-cache:
-  directories:
-    - ~/Rlib
-
-# install the package and dependencies:
-# - create directory for R libraries (if not already exists)
-# - create .Renviron with location of R libraries
-# - define R repository in .Rprofile
-# - add .travis.yml to .Rbuildignore
-# - install devtools if not already installed
-# - update all installed packages
-# - install package with dependencies
-install:
-  - mkdir -p ~/Rlib
-  - echo 'R_LIBS=~/Rlib' > .Renviron
-  - echo 'options(repos = "http://cran.rstudio.com")' > .Rprofile
-  - Rscript -e 'if(!"devtools" %in% rownames(installed.packages())) { install.packages("devtools", dependencies = TRUE) }'
-  - Rscript -e 'update.packages(ask = FALSE, instlib = "~/Rlib")'
-  - Rscript -e 'devtools::install_deps(pkg = ".", dependencies = TRUE)'
-  - WORKDIR=`pwd`
-  - cd $HOME
+before_install:
   - mkdir -p zonation4
   - cd zonation4
-  - wget http://cbig.it.helsinki.fi/files/zonation/zig4/zonation-4.0.0rc1_compact-GNU-Linux.tar.bz2
-  - tar jxf zonation-4.0.0rc1_compact-GNU-Linux.tar.bz2 -C . --strip-components 1
-  - mkdir -p $HOME/bin
-  - ln -sf ~/zonation4/bin/zig4 /home/travis/bin/zig4
+  - git clone https://github.com/cbig/zonation-core
+  - mkdir build
+  - cd build
+  - cmake ../zonation-core
+  - make
+  - ln -sf /home/travis/zonation4/build/zig4 /home/travis/bin/zig4
   - cd $WORKDIR
 
-# Build and check package
-script:
-  - R CMD build .  --no-manual
-  - PKG_FILE_NAME=$(ls -1t *.tar.gz | head -n 1)
-  - R CMD check "${PKG_FILE_NAME}"  --no-build-vignettes --no-manual --as-cran
-
- # send e-mails if stuff changes
-notifications:
-  email:
-    on_success: change
-    on_failure: change
+matrix:
+  include:
+  - r: oldrel
+  - r: release
+  - r: devel
