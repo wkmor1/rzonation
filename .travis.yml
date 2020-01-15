@@ -10,12 +10,9 @@ addons:
     packages:
       - libgdal-dev
       - libproj-dev
-      - build-essential
-      - ca-certificates
       - cmake
       - libboost-all-dev
       - libfftw3-dev
-      - libqt4-dev
       - libqwt-dev
 
 before_install:
