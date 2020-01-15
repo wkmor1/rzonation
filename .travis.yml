@@ -13,11 +13,13 @@ addons:
       - gcc-8
       - libgdal-dev
       - libproj-dev
-      - cmake
       - libboost-all-dev
       - libfftw3-dev
       - libqwt-dev
 
+env:
+  - CC=gcc-8
+        
 before_install:
   - mkdir -p zonation4
   - cd zonation4
