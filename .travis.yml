@@ -1,4 +1,5 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+dist: bionic
 
 language: R
 
@@ -7,19 +8,14 @@ cache:
 
 addons:
   apt:
-    sources:
-      - sourceline: 'ppa:mhier/libboost-latest'
-      - ubuntu-toolchain-r-test
     packages:
-      - gcc-8
       - libgdal-dev
       - libproj-dev
-      - libboost1.67-dev
+      - libboost-filesystem-dev
+      - libboost-program-options-dev
+      - libboost-thread-dev
       - libfftw3-dev
       - libqwt-dev
-
-env:
-  - CC=gcc-8
         
 before_install:
   - mkdir -p zonation4
